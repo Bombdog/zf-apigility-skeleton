@@ -26,5 +26,4 @@ return [
     'ZF\\Versioning',
     'Application',
     'Entity',
-    'Widgets'
 ];
