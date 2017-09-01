@@ -25,6 +25,10 @@
             "dev-develop": "1.5-dev"
         }
     },
+    "provide": {
+        "ext-mongo": "1.6.14",
+        "doctrine/doctrine-mongo-odm-module ": "^0.9.1"
+    },
     "require": {
         "php": "^7.1",
         "zendframework/zend-component-installer": "^1.0 || ^0.5 || ^1.0.0-dev@dev",
@@ -34,7 +38,8 @@
         "zfcampus/zf-apigility-doctrine": "^2.1.0",
         "alcaeus/mongo-php-adapter": "^1.1",
         "doctrine/mongodb": "^1.6",
-        "doctrine/mongodb-odm": "^1.1"
+        "doctrine/mongodb-odm": "^1.1",
+        "bombdog/doctrine-mongo-odm-module": "dev-develop"
     },
     "require-dev": {
         "zendframework/zend-developer-tools": "^1.1",
@@ -70,5 +75,11 @@
         "development-status": "zf-development-mode status",
         "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
         "test": "phpunit"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:Bombdog/DoctrineMongoODMModule.git"
+        }
+    ]
 }

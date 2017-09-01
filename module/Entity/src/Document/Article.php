@@ -4,8 +4,6 @@ namespace Entity\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Entity\Util\UTC;
-use Entity\Document\Interfaces\TaggableInterface;
-use Entity\Document\Interfaces\ValidatableInterface;
 use Entity\Document\Traits\CreatedStampTrait;
 use Entity\Document\Traits\DeletedStampTrait;
 use Entity\Document\Traits\SequenceTrait;
@@ -28,7 +26,7 @@ use Doctrine\Common\Collections\Collection;
  *   @ODM\Index(keys={"title"="text","content"="text"},name="idxArticleSearch")
  * })
  */
-class Article implements ValidatableInterface, TaggableInterface
+class Article
 {
     const STATUS_DRAFT = 1;
     const STATUS_PUBLISHED = 2;
@@ -289,30 +287,6 @@ class Article implements ValidatableInterface, TaggableInterface
         $this->deletedAt = null;
         $this->status = self::STATUS_DRAFT;
 
-        return $this;
-    }
-
-    /**
-     * Get the old wordpress slug (if the article is imported from wordpress)
-     *
-     * @return string
-     */
-    public function getWpSlug()
-    {
-        return $this->wpSlug;
-    }
-
-    /**
-     * Set the old wordpress slug
-     *
-     * @param string $wpSlug
-     *
-     * @return $this
-     * @deprecated
-     */
-    public function setWpSlug($wpSlug)
-    {
-        $this->wpSlug = $wpSlug;
         return $this;
     }
 }

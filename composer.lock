@@ -4,8 +4,109 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "39135a8f39972f739d52219d7ee73a15",
+    "content-hash": "f081a45d1fddbd2c92606049631e1ea2",
     "packages": [
+        {
+            "name": "Bombdog/doctrine-mongo-odm-module",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Bombdog/DoctrineMongoODMModule.git",
+                "reference": "7294ace7db105054f87e54ee6878e44871e80d3c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bombdog/DoctrineMongoODMModule/zipball/7294ace7db105054f87e54ee6878e44871e80d3c",
+                "reference": "7294ace7db105054f87e54ee6878e44871e80d3c",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/doctrine-module": "^1.2",
+                "doctrine/mongodb-odm": "^1.1",
+                "php": "^5.6 || ^7.0",
+                "zendframework/zend-hydrator": "^2.2",
+                "zendframework/zend-mvc": "^2.7.10 || ^3.0.1",
+                "zendframework/zend-servicemanager": "^2.7.6 || ^3.1",
+                "zendframework/zend-stdlib": "^2.7.7 || ^3.0.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7",
+                "squizlabs/php_codesniffer": "^3.0.0",
+                "zendframework/zend-console": "^2.6",
+                "zendframework/zend-i18n": "^2.7.3",
+                "zendframework/zend-log": "^2.9",
+                "zendframework/zend-modulemanager": "^2.7.2",
+                "zendframework/zend-mvc-console": "^1.1",
+                "zendframework/zend-serializer": "^2.8",
+                "zendframework/zend-session": "^2.7.3",
+                "zendframework/zend-view": "^2.8.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                },
+                "zf": {
+                    "module": "DoctrineMongoODMModule"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DoctrineMongoODMModule\\": "src/DoctrineMongoODMModule/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "DoctrineMongoODMModuleTest\\": "tests/DoctrineMongoODMModuleTest/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Spraggs",
+                    "email": "theman@spiffyjr.me"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                },
+                {
+                    "name": "Evan Coury",
+                    "email": "me@evancoury.com"
+                },
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@hotmail.com"
+                },
+                {
+                    "name": "Tim Roediger",
+                    "email": "superdweebie@gmail.com"
+                },
+                {
+                    "name": "Maciej Malarz",
+                    "email": "malarzm@gmail.com"
+                },
+                {
+                    "name": "Andreas Braun",
+                    "email": "alcaeus@alcaeus.org"
+                }
+            ],
+            "description": "Zend Framework Module that provides Doctrine MongoDB ODM functionality",
+            "homepage": "http://www.doctrine-project.org/",
+            "keywords": [
+                "doctrine",
+                "module",
+                "mongodb",
+                "odm",
+                "zf"
+            ],
+            "support": {
+                "source": "https://github.com/Bombdog/DoctrineMongoODMModule/tree/develop"
+            },
+            "time": "2017-09-01T16:05:12+00:00"
+        },
         {
             "name": "alcaeus/mongo-php-adapter",
             "version": "1.1.2",
@@ -69,6 +170,43 @@
                 "mongodb"
             ],
             "time": "2017-08-04T16:13:33+00:00"
+        },
+        {
+            "name": "api-skeletons/zf-doctrine-module-zend-hydrator",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/API-Skeletons/zf-doctrine-module-zend-hydrator.git",
+                "reference": "9041810ef43f37e3526941cef471970cbd65cf92"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/API-Skeletons/zf-doctrine-module-zend-hydrator/zipball/9041810ef43f37e3526941cef471970cbd65cf92",
+                "reference": "9041810ef43f37e3526941cef471970cbd65cf92",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/doctrine-module": "^1.0",
+                "zendframework/zend-hydrator": "~1.0 || ^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DoctrineModule\\Stdlib\\Hydrator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tom H Anderson",
+                    "email": "tom.h.anderson@gmail.com"
+                }
+            ],
+            "description": "Corrects DoctrineModule classes to use zend-hydrator",
+            "time": "2016-06-12T20:55:02+00:00"
         },
         {
             "name": "bshaffer/oauth2-server-php",
@@ -438,6 +576,98 @@
                 "spl"
             ],
             "time": "2017-08-31T08:43:38+00:00"
+        },
+        {
+            "name": "doctrine/doctrine-module",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/DoctrineModule.git",
+                "reference": "9407d04d0b08e7071dab05c9d068cefda9dc5a6f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/DoctrineModule/zipball/9407d04d0b08e7071dab05c9d068cefda9dc5a6f",
+                "reference": "9407d04d0b08e7071dab05c9d068cefda9dc5a6f",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/cache": "^1.6",
+                "doctrine/common": "^2.6.1",
+                "php": "^5.6 || ^7.0",
+                "symfony/console": "^2.3 || ^3.0",
+                "zendframework/zend-authentication": "^2.5.3",
+                "zendframework/zend-cache": "^2.7.1",
+                "zendframework/zend-form": "^2.9",
+                "zendframework/zend-hydrator": "^1.1 || ^2.2.1",
+                "zendframework/zend-mvc": "^2.7.10 || ^3.0.1",
+                "zendframework/zend-paginator": "^2.7",
+                "zendframework/zend-servicemanager": "^2.7.6 || ^3.1",
+                "zendframework/zend-stdlib": "^2.7.7 || ^3.0.1",
+                "zendframework/zend-validator": "^2.8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^2.6.2",
+                "zendframework/zend-i18n": "^2.7.3",
+                "zendframework/zend-log": "^2.9",
+                "zendframework/zend-modulemanager": "^2.7.2",
+                "zendframework/zend-serializer": "^2.8",
+                "zendframework/zend-session": "^2.7.3",
+                "zendframework/zend-test": "^2.6.1 || ^3.0.1",
+                "zendframework/zend-version": "^2.5.1"
+            },
+            "suggest": {
+                "doctrine/data-fixtures": "Data Fixtures if you want to generate test data or bootstrap data for your deployments",
+                "zendframework/zend-mvc-console": "^1.1.10 if you are using ZF3"
+            },
+            "bin": [
+                "bin/doctrine-module"
+            ],
+            "type": "library",
+            "extra": {
+                "zf": {
+                    "module": "DoctrineModule"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "DoctrineModule\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Spraggs",
+                    "email": "theman@spiffyjr.me",
+                    "homepage": "http://www.spiffyjr.me/"
+                },
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@hotmail.com"
+                },
+                {
+                    "name": "Michaël Gallego",
+                    "email": "mic.gallego@gmail.com",
+                    "homepage": "http://www.michaelgallego.fr"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://marco-pivetta.com/"
+                }
+            ],
+            "description": "Zend Framework Module that provides Doctrine basic functionality required for ORM and ODM modules",
+            "homepage": "http://www.doctrine-project.org/",
+            "keywords": [
+                "doctrine",
+                "module",
+                "zf"
+            ],
+            "time": "2016-10-03T19:40:55+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -933,6 +1163,67 @@
             "time": "2017-03-13T16:27:32+00:00"
         },
         {
+            "name": "phpro/zf-doctrine-hydration-module",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpro/zf-doctrine-hydration-module.git",
+                "reference": "d476c98b8d1e41696b87e1da0429abcfa63586db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpro/zf-doctrine-hydration-module/zipball/d476c98b8d1e41696b87e1da0429abcfa63586db",
+                "reference": "d476c98b8d1e41696b87e1da0429abcfa63586db",
+                "shasum": ""
+            },
+            "require": {
+                "api-skeletons/zf-doctrine-module-zend-hydrator": "^1.0",
+                "doctrine/common": "^2.6.1",
+                "doctrine/doctrine-module": "^1.2",
+                "doctrine/instantiator": "^1.0.5",
+                "php": "^5.6 || ^7.0",
+                "zendframework/zend-hydrator": "^1.1 || ^2.2.1",
+                "zendframework/zend-modulemanager": "^2.7.2",
+                "zendframework/zend-servicemanager": "^2.7.6 || ^3.1"
+            },
+            "require-dev": {
+                "doctrine/doctrine-mongo-odm-module": "^0.11",
+                "doctrine/doctrine-orm-module": "^1.1",
+                "doctrine/mongodb-odm": "^1.1",
+                "fabpot/php-cs-fixer": "^1.11.6",
+                "phpro/grumphp": "^0.9.1",
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "extra": {
+                "zf": {
+                    "module": "Phpro\\DoctrineHydrationModule"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Phpro\\DoctrineHydrationModule\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Toon Verwerft",
+                    "email": "toon.verwerft@phpro.be"
+                }
+            ],
+            "description": "Doctrine hydrators for ZF2 and ZF3",
+            "keywords": [
+                "doctrine",
+                "hydrator",
+                "zf2"
+            ],
+            "time": "2016-10-05T06:33:09+00:00"
+        },
+        {
             "name": "psr/container",
             "version": "1.0.0",
             "source": {
@@ -1272,6 +1563,75 @@
                 "zf2"
             ],
             "time": "2016-02-28T15:02:34+00:00"
+        },
+        {
+            "name": "zendframework/zend-cache",
+            "version": "2.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-cache.git",
+                "reference": "c98331b96d3b9d9b24cf32d02660602edb34d039"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-cache/zipball/c98331b96d3b9d9b24cf32d02660602edb34d039",
+                "reference": "c98331b96d3b9d9b24cf32d02660602edb34d039",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5 || ^7.0",
+                "zendframework/zend-eventmanager": "^2.6.2 || ^3.0",
+                "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
+                "zendframework/zend-stdlib": "^2.7 || ^3.0"
+            },
+            "require-dev": {
+                "phpbench/phpbench": "^0.10.0",
+                "phpunit/phpunit": "^4.8",
+                "zendframework/zend-coding-standard": "~1.0.0",
+                "zendframework/zend-serializer": "^2.6",
+                "zendframework/zend-session": "^2.6.2"
+            },
+            "suggest": {
+                "ext-apc": "APC or compatible extension, to use the APC storage adapter",
+                "ext-apcu": "APCU >= 5.1.0, to use the APCu storage adapter",
+                "ext-dba": "DBA, to use the DBA storage adapter",
+                "ext-memcache": "Memcache >= 2.0.0 to use the Memcache storage adapter",
+                "ext-memcached": "Memcached >= 1.0.0 to use the Memcached storage adapter",
+                "ext-mongo": "Mongo, to use MongoDb storage adapter",
+                "ext-redis": "Redis, to use Redis storage adapter",
+                "ext-wincache": "WinCache, to use the WinCache storage adapter",
+                "ext-xcache": "XCache, to use the XCache storage adapter",
+                "mongofill/mongofill": "Alternative to ext-mongo - a pure PHP implementation designed as a drop in replacement",
+                "zendframework/zend-serializer": "Zend\\Serializer component",
+                "zendframework/zend-session": "Zend\\Session component"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev",
+                    "dev-develop": "2.8-dev"
+                },
+                "zf": {
+                    "component": "Zend\\Cache",
+                    "config-provider": "Zend\\Cache\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "provides a generic way to cache any data",
+            "homepage": "https://github.com/zendframework/zend-cache",
+            "keywords": [
+                "cache",
+                "zf2"
+            ],
+            "time": "2016-12-16T11:35:47+00:00"
         },
         {
             "name": "zendframework/zend-component-installer",
@@ -1643,6 +2003,83 @@
                 "zf2"
             ],
             "time": "2017-05-17T20:56:17+00:00"
+        },
+        {
+            "name": "zendframework/zend-form",
+            "version": "2.10.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-form.git",
+                "reference": "252db729887844025772bb8045f8df605850ed9c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-form/zipball/252db729887844025772bb8045f8df605850ed9c",
+                "reference": "252db729887844025772bb8045f8df605850ed9c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^5.6",
+                "zendframework/zend-hydrator": "^1.1 || ^2.1",
+                "zendframework/zend-inputfilter": "^2.6",
+                "zendframework/zend-stdlib": "^2.7 || ^3.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "~1.0",
+                "phpunit/phpunit": "^6.0.8 || ^5.7.15",
+                "zendframework/zend-cache": "^2.6.1",
+                "zendframework/zend-captcha": "^2.7.1",
+                "zendframework/zend-code": "^2.6 || ^3.0",
+                "zendframework/zend-coding-standard": "~1.0.0",
+                "zendframework/zend-escaper": "^2.5",
+                "zendframework/zend-eventmanager": "^2.6.2 || ^3.0",
+                "zendframework/zend-filter": "^2.6",
+                "zendframework/zend-i18n": "^2.6",
+                "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
+                "zendframework/zend-session": "^2.6.2",
+                "zendframework/zend-text": "^2.6",
+                "zendframework/zend-validator": "^2.6",
+                "zendframework/zend-view": "^2.6.2",
+                "zendframework/zendservice-recaptcha": "^3.0.0"
+            },
+            "suggest": {
+                "zendframework/zend-captcha": "^2.7.1, required for using CAPTCHA form elements",
+                "zendframework/zend-code": "^2.6 || ^3.0, required to use zend-form annotations support",
+                "zendframework/zend-eventmanager": "^2.6.2 || ^3.0, reuired for zend-form annotations support",
+                "zendframework/zend-i18n": "^2.6, required when using zend-form view helpers",
+                "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3, required to use the form factories or provide services",
+                "zendframework/zend-view": "^2.6.2, required for using the zend-form view helpers",
+                "zendframework/zendservice-recaptcha": "in order to use the ReCaptcha form element"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.10-dev",
+                    "dev-develop": "2.11-dev"
+                },
+                "zf": {
+                    "component": "Zend\\Form",
+                    "config-provider": "Zend\\Form\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Form\\": "src/"
+                },
+                "files": [
+                    "autoload/formElementManagerPolyfill.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zend-form",
+            "keywords": [
+                "form",
+                "zf2"
+            ],
+            "time": "2017-05-18T14:59:53+00:00"
         },
         {
             "name": "zendframework/zend-http",
@@ -2743,6 +3180,81 @@
                 "zf2"
             ],
             "time": "2016-07-28T13:47:39+00:00"
+        },
+        {
+            "name": "zfcampus/zf-apigility-doctrine",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zfcampus/zf-apigility-doctrine.git",
+                "reference": "ef5f2c3398a1090eb69a7defc476b66063ec8f38"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zfcampus/zf-apigility-doctrine/zipball/ef5f2c3398a1090eb69a7defc476b66063ec8f38",
+                "reference": "ef5f2c3398a1090eb69a7defc476b66063ec8f38",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0",
+                "phpro/zf-doctrine-hydration-module": "^2.0.1 || ^3.0",
+                "zfcampus/zf-apigility": "^1.3"
+            },
+            "require-dev": {
+                "doctrine/doctrine-module": "^1.2",
+                "doctrine/doctrine-mongo-odm-module": "^0.11",
+                "doctrine/doctrine-orm-module": "^1.1",
+                "doctrine/mongodb-odm": "^1.0",
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^2.7",
+                "zendframework/zend-form": "^2.9.2",
+                "zendframework/zend-i18n": "^2.7.3",
+                "zendframework/zend-log": "^2.9.1",
+                "zendframework/zend-mvc": "^2.7.10 || ^3.0.2",
+                "zendframework/zend-serializer": "^2.8",
+                "zendframework/zend-stdlib": "^2.7.7 || ^3.0.1",
+                "zendframework/zend-test": "^2.6.1 || ^3.0.1",
+                "zfcampus/zf-apigility-admin": "^1.5.7",
+                "zfcampus/zf-hal": "^1.4.2"
+            },
+            "suggest": {
+                "api-skeletons/zf-doctrine-hydrator": "Hydrator strategies for Doctrine in Apipgility",
+                "api-skeletons/zf-oauth2-doctrine": "OAuth2 Doctrine Adapter for Apigility",
+                "doctrine/doctrine-mongo-odm-module": "For Mongo ODM mapping",
+                "doctrine/doctrine-orm-module": "For ORM mapping"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev",
+                    "dev-develop": "2.2-dev"
+                },
+                "zf": {
+                    "module": [
+                        "ZF\\Apigility\\Doctrine\\Admin",
+                        "ZF\\Apigility\\Doctrine\\Server"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ZF\\Apigility\\Doctrine\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Apigility Doctrine module",
+            "homepage": "http://apigility.org/",
+            "keywords": [
+                "api",
+                "apigility",
+                "doctrine",
+                "framework",
+                "zf"
+            ],
+            "time": "2016-10-17T14:35:27+00:00"
         },
         {
             "name": "zfcampus/zf-apigility-documentation",
@@ -4444,7 +4956,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "zendframework/zend-component-installer": 20
+        "zendframework/zend-component-installer": 20,
+        "bombdog/doctrine-mongo-odm-module": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

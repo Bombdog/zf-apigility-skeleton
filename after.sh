@@ -17,4 +17,9 @@ else
     sudo apt-get install -y mongodb-org
     sudo service mongod start
     sudo pecl install mongodb
+
+    # test this...
+    touch /etc/php/7.1/mods-available/mongodb.ini
+    sudo echo "extension=mongodb.so" > "/etc/php/7.1/mods-available/mongodb.ini"
+    sudo ln -s /etc/php/7.1/mods-available/mongodb.ini /etc/php/7.1/fpm/conf.d/20-mongodb.ini
 fi
