@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# Shortcut to a zend console command that will freshen the schema.
+# It's important to run this if there are new indexes in the ODM annotations.
+#
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+cd $DIR
+cd ../public
+/usr/bin/php index.php odm:schema:create

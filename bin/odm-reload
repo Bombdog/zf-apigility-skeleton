@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Shortcut to a bunch of zend console commands that will clean out proxies and hydrators
+# then renew them based on the latest enity model. Must be run for deployments.
+#
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+cd $DIR
+cd ../public
+/usr/bin/php index.php odm:generate:proxies
+/usr/bin/php index.php odm:generate:hydrators
