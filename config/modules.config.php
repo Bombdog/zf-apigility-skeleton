@@ -17,7 +17,7 @@ return [
     'ZF\\Apigility\\Documentation',
     'ZF\\ApiProblem',
     'ZF\\Configuration',
-    'ZF\\OAuth2',
+    'BdAuth',
     'ZF\\MvcAuth',
     'ZF\\Hal',
     'ZF\\ContentNegotiation',
