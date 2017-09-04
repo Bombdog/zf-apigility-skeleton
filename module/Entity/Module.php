@@ -1,6 +1,12 @@
 <?php
 namespace Entity;
 
+use Doctrine\Common\EventManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Types\Type;
+use Entity\Subscriber\SequenceSubscriber;
+use Zend\Mvc\MvcEvent;
+
 /**
  * Entity module - module to manage our entity model
  * @package Entity
@@ -25,5 +31,30 @@ class Module
                 ),
             ),
         );
+    }
+
+    /**
+     * onBootstrap (MVC startup event)
+     *
+     * @param MvcEvent $e
+     */
+    public function onBootstrap(MvcEvent $e)
+    {
+        $sm = $e->getApplication()->getServiceManager();
+
+        /** @var DocumentManager $dm */
+        $dm = $sm->get('doctrine.documentmanager.odm_default');
+
+        /** @var EventManager $evtManager */
+        $evtManager = $dm->getEventManager();
+        $evtManager->addEventSubscriber(new SequenceSubscriber());
+
+        if (!Type::hasType('utcdatetime')) {
+            Type::addType('utcdatetime', 'Entity\Type\UtcDateTime');
+        }
+
+        if (!Type::hasType('currency')) {
+            Type::addType('currency', 'Entity\Type\Currency');
+        }
     }
 }

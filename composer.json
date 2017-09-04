@@ -47,7 +47,8 @@
         "zfcampus/zf-asset-manager": "^1.1.1",
         "zfcampus/zf-composer-autoloading": "^1.0",
         "zfcampus/zf-deploy": "^1.2",
-        "laravel/homestead": "^6.1"
+        "laravel/homestead": "^6.1",
+        "symfony/var-dumper": "^3.0"
     },
     "suggest": {
         "zfcampus/zf-apigility-doctrine": "zfcampus/zf-apigility-doctrine ^2.1 to create Doctrine-Connected REST services",
@@ -64,7 +65,8 @@
             "ApplicationTest\\": "module/Application/test/"
         },
         "files": [
-            "src/Apigility/constants.php"
+            "src/Apigility/constants.php",
+            "src/helpers.php"
         ]
     },
     "scripts": {
