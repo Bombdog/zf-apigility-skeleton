@@ -51,4 +51,19 @@ return [
             ],
         ],
     ],
+    'zf-mvc-auth' => [
+        'authorization' => [
+            'Fixture\\V1\\Rpc\\Apply\\Controller' => [
+                'actions' => [
+                    'Apply' => [
+                        'GET' => true,
+                        'POST' => false,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
+        ],
+    ],
 ];

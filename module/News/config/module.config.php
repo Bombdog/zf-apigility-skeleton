@@ -41,7 +41,7 @@ return [
             'collection_query_whitelist' => [],
             'page_size' => 25,
             'page_size_param' => null,
-            'entity_class' => 'Entity\\Document\\Article',
+            'entity_class' => \Entity\Document\Article::class,
             'collection_class' => \News\V1\Rest\Article\ArticleCollection::class,
             'service_name' => 'Article',
         ],
@@ -83,13 +83,13 @@ return [
                 'route_identifier_name' => 'article_id',
                 'hydrator' => \Zend\Hydrator\ArraySerializable::class,
             ],
-            '\\Entity\\Document\\Article' => [
+            \Entity\Document\Article::class => [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'news.rest.article',
                 'route_identifier_name' => 'article_id',
                 'hydrator' => \Zend\Hydrator\ArraySerializable::class,
             ],
-            'Entity\\Document\\Article' => [
+            \Entity\Document\Article::class => [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'news.rest.article',
                 'route_identifier_name' => 'article_id',
@@ -190,6 +190,26 @@ return [
                 'required' => false,
                 'filters' => [],
                 'validators' => [],
+            ],
+        ],
+    ],
+    'zf-mvc-auth' => [
+        'authorization' => [
+            'News\\V1\\Rest\\Article\\Controller' => [
+                'collection' => [
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ],
+                'entity' => [
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => false,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ],
             ],
         ],
     ],
