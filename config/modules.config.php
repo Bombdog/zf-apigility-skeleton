@@ -28,5 +28,5 @@ return [
     'DoctrineModule',
     'DoctrineMongoODMModule',
     'Entity',
-    'News',
+    'News'
 ];

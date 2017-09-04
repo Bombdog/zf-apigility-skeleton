@@ -2,7 +2,6 @@
 
 namespace Entity\Document;
 
-use Entity\Api\OAuth\Role;
 use Entity\Util\Password;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
@@ -97,14 +96,6 @@ class User
     protected $resetKey;
 
     /**
-     * Autioneers association. One user may administer on behalf of many auctioneers.
-     * This one-to-many connection is complementary to the lots:control scope
-     * @var ArrayCollection
-     * @ODM\ReferenceMany(targetDocument="Entity\Document\Auctioneer", simple=true)
-     */
-    protected $auctioneers;
-
-    /**
      * Flag to show that a user account is enabled.
      * @ODM\Field(type="boolean")
      * @var bool
@@ -117,15 +108,6 @@ class User
      * @var array
      */
     protected $flags = [];
-
-    /**
-     * Constructor to initialise collections.
-     */
-    public function __construct()
-    {
-        $this->auctioneers = new ArrayCollection();
-        $this->userProfile = new UserProfile();
-    }
 
     /**
      * @return string
@@ -154,7 +136,7 @@ class User
     public function setSequence($value)
     {
         $this->setSequenceTrait($value);
-        $this->userProfile->setUserId($this->sequence);
+
         return $this;
     }
 
@@ -251,35 +233,6 @@ class User
     }
 
     /**
-     * Get role.
-     * @return int
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    /**
-     * Set a role for the user.
-     *
-     * @param int $role
-     *
-     * @return $this
-     */
-    public function setRole($role)
-    {
-        if (!Role::isRole($role)) {
-            throw new EntityInvalidArgumentException("$role is not a valid role");
-        }
-        if (is_string($role) && !ctype_digit($role)) {
-            $role = Role::getId($role);
-        }
-        $this->scope = Role::getScope($role);
-        $this->role = $role;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getFirstName()
@@ -369,69 +322,6 @@ class User
     public function getAuctioneers()
     {
         return $this->auctioneers;
-    }
-
-    /**
-     * Add an auctioneer to this user's profile (so the user may administer for this auctioneer).
-     * N.B. Also needs a corresponding scope in the mysql user table to enable editing in HAPI.
-     *
-     * @param Auctioneer $auctioneer
-     *
-     * @return $this
-     */
-    public function addAuctioneer(Auctioneer $auctioneer)
-    {
-        if (!$this->auctioneers->contains($auctioneer)) {
-            $this->auctioneers->add($auctioneer);
-        }
-        return $this;
-    }
-
-    /**
-     * Remove auctioneer from profile.
-     *
-     * @param Auctioneer $auctioneer
-     *
-     * @return $this
-     */
-    public function removeAuctioneer(Auctioneer $auctioneer)
-    {
-        $this->auctioneers->removeElement($auctioneer);
-        return $this;
-    }
-
-    /**
-     * Convenience method to test if this User is attached to a given auction house.
-     *
-     * @param Auctioneer $auctioneer
-     *
-     * @return bool
-     */
-    public function isUserForAuctionHouse(Auctioneer $auctioneer)
-    {
-        return $this->auctioneers->contains($auctioneer);
-    }
-
-    /**
-     * Get the user's profile.
-     * @return UserProfile
-     */
-    public function getUserProfile()
-    {
-        return $this->userProfile;
-    }
-
-    /**
-     * Set the user profile.
-     *
-     * @param UserProfile $userProfile
-     *
-     * @return $this
-     */
-    public function setUserProfile($userProfile)
-    {
-        $this->userProfile = $userProfile;
-        return $this;
     }
 
     /**
