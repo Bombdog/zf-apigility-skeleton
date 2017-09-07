@@ -56,7 +56,7 @@ return [
             'Fixture\\V1\\Rpc\\Apply\\Controller' => [
                 'actions' => [
                     'Apply' => [
-                        'GET' => true,
+                        'GET' => false,
                         'POST' => false,
                         'PUT' => false,
                         'PATCH' => false,

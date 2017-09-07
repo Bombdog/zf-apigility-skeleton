@@ -3,6 +3,7 @@ namespace Fixture\V1\Rpc\Apply;
 
 use Application\Api\Response\ApiSuccessResponse;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Entity\Document\Oauth\Client;
 use Entity\Document\User;
 use Zend\Mvc\Controller\AbstractActionController;
 
@@ -30,9 +31,14 @@ class ApplyController extends AbstractActionController
     {
         $this->purge();
 
+        # Minimal client entry
+        $client = new Client();
+        $client->setClientId('bd-login');
+        $this->dm->persist($client);
+
         # User "bob" with password "canread1"
         $user1 = new User();
-        $user1->setEmail('bob@blah.com')
+        $user1->setUsername('bob@blah.com')
             ->setEmailVerified(true)
             ->setFirstName('Bob')
             ->setLastName('McTest')
@@ -43,7 +49,7 @@ class ApplyController extends AbstractActionController
 
         # User "donald" with password "canwrite1"
         $user2 = new User();
-        $user2->setEmail('donald@blah.com')
+        $user2->setUsername('donald@blah.com')
             ->setEmailVerified(true)
             ->setFirstName('Donald')
             ->setLastName('McTest')
