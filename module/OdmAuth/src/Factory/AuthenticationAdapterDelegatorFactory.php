@@ -3,6 +3,7 @@ namespace OdmAuth\Factory;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
+use ZF\MvcAuth\Factory\AuthenticationHttpAdapterFactory;
 
 /**
  * Replacement "delegator factory" for class of the same name in ZF\MvcAuth\Factory
@@ -11,7 +12,6 @@ use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
  */
 class AuthenticationAdapterDelegatorFactory implements DelegatorFactoryInterface
 {
-
     /**
      *
      * @param ContainerInterface $services
@@ -36,7 +36,30 @@ class AuthenticationAdapterDelegatorFactory implements DelegatorFactoryInterface
             return $listener;
         }
 
-        $listener->attach($services->get('OdmAuth\Adapter\OdmAdapter'));
+        foreach ($config['zf-mvc-auth']['authentication']['adapters'] as $type => $data) {
+
+            if (! isset($data['adapter']) || ! is_string($data['adapter'])) {
+                continue;
+            }
+
+            switch ($data['adapter']) {
+                case 'ZF\MvcAuth\Authentication\HttpAdapter':
+                    $adapter = AuthenticationHttpAdapterFactory::factory($type, $data, $services);
+                    break;
+                case 'ZF\MvcAuth\Authentication\OAuth2Adapter':
+                case 'Application\Auth\OAuth2Adapter':
+                case 'OdmAuth\Adapter\OAuth2Adapter':
+                    $adapter = $services->get('OdmAuth\Adapter\OdmAdapter');
+                    break;
+                default:
+                    $adapter = false;
+                    break;
+            }
+
+            if ($adapter) {
+                $listener->attach($adapter);
+            }
+        }
 
         return $listener;
     }
