@@ -1,8 +1,9 @@
 <?php
 
-namespace Entity\Document\Oauth;
+namespace Entity\Document\OAuth;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Entity\Util\OAuth;
 
 /**
  * Entity for the oauth_access_tokens collection.
@@ -13,7 +14,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
  *   @ODM\Index(keys={"expires"="asc"},name="idxAccessExpires")
  * })
  */
-class AccessToken
+class AccessToken implements \JsonSerializable
 {
     /**
      * @ODM\Id
@@ -55,6 +56,25 @@ class AccessToken
      * @var string
      */
     protected $scope;
+
+    /**
+     * Not stored, kept for serialization purposes
+     * @var int
+     */
+    protected $expiryTime;
+
+    /**
+     * AccessToken constructor.
+     * Creates a new token ready with expiry time
+     *
+     * @param $expiryTime
+     */
+    public function __construct($expiryTime)
+    {
+        $this->accessToken = OAuth::generateToken();
+        $this->expires = time() + (int) $expiryTime;
+        $this->expiryTime = $expiryTime;
+    }
 
     /**
      * @return string
@@ -152,5 +172,20 @@ class AccessToken
     {
         $this->scope = $scope;
         return $this;
+    }
+
+    /**
+     * Serialize to JSON
+     * @todo: other token types and a refresh token
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'access_token' => $this->accessToken,
+            'expires_in' => $this->expiryTime,
+            'refresh_token' => 'none',
+            'scope' => $this->scope,
+            'token_type' => 'Bearer'
+        ];
     }
 }

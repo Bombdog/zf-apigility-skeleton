@@ -15,7 +15,7 @@ abstract class BaseRepository extends DocumentRepository
 {
     /**
      * Find entity directly by its id.
-     * Adapted for a common HAPI use case where we might pass an integer sequence id instead of a mongoId
+     * Adapted for our use case where we might pass an integer sequence id instead of a mongoId
      *
      * @param string|object $id The identifier
      * @param int $lockMode
@@ -32,17 +32,5 @@ abstract class BaseRepository extends DocumentRepository
         }
 
         return parent::find($id, $lockMode, $lockVersion);
-    }
-
-    /**
-     * Test for a mongoId
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function isMongoId($value)
-    {
-        return (is_string($value) && strlen($value) == 24 && ctype_xdigit($value));
     }
 }
