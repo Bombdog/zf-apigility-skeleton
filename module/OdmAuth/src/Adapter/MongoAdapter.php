@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
-namespace BdAuth\Adapter;
+namespace OdmAuth\Adapter;
 
 use MongoClient;
 use OAuth2\Storage\Mongo as OAuth2Mongo;

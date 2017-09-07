@@ -4,8 +4,11 @@
  * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
-namespace ZF\OAuth2;
+namespace OdmAuth\Adapter\Exception;
 
-interface ExceptionInterface
+use OdmAuth\ExceptionInterface;
+
+class RuntimeException extends \RuntimeException implements
+    ExceptionInterface
 {
 }

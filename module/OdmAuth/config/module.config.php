@@ -6,15 +6,33 @@
  *
  * This module is a re-worked version of zfcampus/ZF-OAuth2
  */
-namespace BdAuth;
+namespace OdmAuth;
 
 return [
 
+    # divert any authentication requests to our odm adapter via the delegator
+    'service_manager' => array(
+        'delegators' => array(
+            'ZF\MvcAuth\Authentication\DefaultAuthenticationListener' => array(
+                'OdmAuth\Factory\AuthenticationAdapterDelegatorFactory',
+            ),
+        ),
+        'factories' => array(
+            'Request'                      => 'OdmAuth\Factory\RequestFactory',
+            'OdmAuth\\Adapter\\OdmAdapter' => 'OdmAuth\\Factory\\OdmAdapterFactory',
+            'OdmAuth\\Service\\OdmAuthService' => 'OdmAuth\\Factory\\OdmAuthServiceFactory'
+            //'OdmAuth\Adapter\MongoAdapter'  => 'OdmAuth\Factory\MongoAdapterFactory',
+            //'OdmAuth\Provider\UserId\AuthenticationService' => 'OdmAuth\Provider\UserId\AuthenticationServiceFactory',
+            //'OdmAuth\Service\OAuth2Server'  => 'OdmAuth\Factory\NamedOAuth2ServerFactory'
+        ),
+    ),
+
+    # register the odmauth adapter
     'zf-mvc-auth' => [
         'authentication' => [
             'adapters' => [
-                'bdauth' => [
-                    'adapter' => 'Application\\Auth\\OAuth2Adapter',
+                'odmauth' => [
+                    'adapter' => 'OdmAuth\\Adapter\\OdmAdapter',
                     'storage' => [
                         'adapter' => 'mongo',
                         'database' => 'doctrine',
@@ -28,7 +46,7 @@ return [
 
     'controllers' => [
         'factories' => [
-            'BdAuth\Controller\Auth' => 'BdAuth\Factory\AuthControllerFactory',
+            'OdmAuth\Controller\Auth' => 'OdmAuth\Factory\AuthControllerFactory',
         ],
     ],
 
@@ -39,7 +57,7 @@ return [
                 'options' => [
                     'route'    => '/oauth',
                     'defaults' => [
-                        'controller' => 'BdAuth\Controller\Auth',
+                        'controller' => 'OdmAuth\Controller\Auth',
                         'action'     => 'token',
                     ],
                 ],
@@ -88,21 +106,7 @@ return [
         ],
     ],
 
-    'service_manager' => array(
-        'delegators' => array(
-            'ZF\MvcAuth\Authentication\DefaultAuthenticationListener' => array(
-                'BdAuth\Factory\AuthenticationAdapterDelegatorFactory',
-            ),
-        ),
-        'aliases' => array(
-            'BdAuth\Provider\UserId' => 'BdAuth\Provider\UserId\AuthenticationService',
-        ),
-        'factories' => array(
-            'BdAuth\Adapter\MongoAdapter'  => 'BdAuth\Factory\MongoAdapterFactory',
-            'BdAuth\Provider\UserId\AuthenticationService' => 'BdAuth\Provider\UserId\AuthenticationServiceFactory',
-            'BdAuth\Service\OAuth2Server'  => 'BdAuth\Factory\NamedOAuth2ServerFactory'
-        ),
-    ),
+
 
     'view_manager' => [
         'template_map' => [
@@ -116,7 +120,7 @@ return [
     'zf-oauth2' => [
         /*
          * Config can include:
-         * - 'storage' => 'name of storage service' - typically BdAuth\Adapter\PdoAdapter
+         * - 'storage' => 'name of storage service' - typically OdmAuth\Adapter\PdoAdapter
          * - 'db' => [ // database configuration for the above PdoAdapter
          *       'dsn'      => 'PDO DSN',
          *       'username' => 'username',
@@ -133,6 +137,8 @@ return [
             'refresh_token'      => true,
             'jwt'                => true,
         ],
+
+        'storage' => 'OdmAuth\Adapter\MongoAdapter',
 
         # we use a custom name for our users collection... users :-)
         'storage_settings' => [
@@ -154,7 +160,7 @@ return [
     ],
     'zf-content-negotiation' => [
         'controllers' => [
-            'BdAuth\Controller\Auth' => [
+            'OdmAuth\Controller\Auth' => [
                 'ZF\ContentNegotiation\JsonModel' => [
                     'application/json',
                     'application/*+json',

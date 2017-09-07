@@ -1,5 +1,5 @@
 <?php
-namespace BdAuth\Identity;
+namespace OdmAuth\Identity;
 
 use Zend\Permissions\Rbac\AbstractRole as AbstractRbacRole;
 use ZF\MvcAuth\Identity\IdentityInterface;

@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
-namespace BdAuth\Provider\UserId;
+namespace OdmAuth\Provider\UserId;
 
 use Interop\Container\ContainerInterface;
 

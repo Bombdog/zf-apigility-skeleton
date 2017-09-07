@@ -4,9 +4,8 @@
  * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
-namespace BdAuth\Controller\Exception;
+namespace OdmAuth;
 
-class RuntimeException extends \RuntimeException implements
-    ExceptionInterface
+interface ExceptionInterface
 {
 }

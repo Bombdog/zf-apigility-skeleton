@@ -1,6 +1,6 @@
 <?php
 
-namespace BdAuth\Adapter;
+namespace OdmAuth\Adapter;
 
 use Application\Cache\ObjectCache;
 use OAuth2\Request as OAuth2Request;

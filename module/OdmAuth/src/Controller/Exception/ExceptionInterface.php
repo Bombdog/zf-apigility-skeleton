@@ -4,9 +4,9 @@
  * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
-namespace BdAuth\Controller\Exception;
+namespace OdmAuth\Controller\Exception;
 
-use BdAuth\ExceptionInterface as OAuth2Exception;
+use OdmAuth\ExceptionInterface as OAuth2Exception;
 
 interface ExceptionInterface extends OAuth2Exception
 {
