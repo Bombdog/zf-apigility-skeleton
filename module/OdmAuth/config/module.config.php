@@ -18,31 +18,11 @@ return [
             ),
         ),
         'factories' => array(
-            'Request'                      => 'OdmAuth\Factory\RequestFactory',
+            'Request'                      => 'OdmAuth\\Factory\\RequestFactory',
             'OdmAuth\\Adapter\\OdmAdapter' => 'OdmAuth\\Factory\\OdmAdapterFactory',
-            'OdmAuth\\Service\\OdmAuthService' => 'OdmAuth\\Factory\\OdmAuthServiceFactory'
-            //'OdmAuth\Adapter\MongoAdapter'  => 'OdmAuth\Factory\MongoAdapterFactory',
-            //'OdmAuth\Provider\UserId\AuthenticationService' => 'OdmAuth\Provider\UserId\AuthenticationServiceFactory',
-            //'OdmAuth\Service\OAuth2Server'  => 'OdmAuth\Factory\NamedOAuth2ServerFactory'
+            'OdmAuth\\Service\\OdmAuthService' => 'OdmAuth\\Factory\\OdmAuthServiceFactory',
         ),
     ),
-
-    # register the odmauth adapter
-    'zf-mvc-auth' => [
-        'authentication' => [
-            'adapters' => [
-                'odmauth' => [
-                    'adapter' => 'OdmAuth\\Adapter\\OdmAdapter',
-                    'storage' => [
-                        'adapter' => 'mongo',
-                        'database' => 'doctrine',
-                        'dsn' => 'mongodb://localhost:27017',
-                        'route' => '/oauth',
-                    ],
-                ],
-            ],
-        ],
-    ],
 
     'controllers' => [
         'factories' => [
@@ -61,52 +41,9 @@ return [
                         'action'     => 'token',
                     ],
                 ],
-                /*
-                'may_terminate' => true,
-                'child_routes' => [
-                    'revoke' => [
-                        'type' => 'literal',
-                        'options' => [
-                            'route' => '/revoke',
-                            'defaults' => [
-                                'action' => 'revoke',
-                            ],
-                        ],
-                    ],
-                    'authorize' => [
-                        'type' => 'literal',
-                        'options' => [
-                            'route' => '/authorize',
-                            'defaults' => [
-                                'action' => 'authorize',
-                            ],
-                        ],
-                    ],
-                    'resource' => [
-                        'type' => 'literal',
-                        'options' => [
-                            'route' => '/resource',
-                            'defaults' => [
-                                'action' => 'resource',
-                            ],
-                        ],
-                    ],
-                    'code' => [
-                        'type' => 'literal',
-                        'options' => [
-                            'route' => '/receivecode',
-                            'defaults' => [
-                                'action' => 'receiveCode',
-                            ],
-                        ],
-                    ],
-                ],
-                */
             ],
         ],
     ],
-
-
 
     'view_manager' => [
         'template_map' => [
@@ -117,8 +54,11 @@ return [
             __DIR__ . '/../view',
         ],
     ],
-    'zf-oauth2' => [
+
+    'odmauth' => [
         /*
+         * NB: these odm-oauth settings are not used, are just copied for future use
+         *
          * Config can include:
          * - 'storage' => 'name of storage service' - typically OdmAuth\Adapter\PdoAdapter
          * - 'db' => [ // database configuration for the above PdoAdapter
@@ -131,18 +71,11 @@ return [
          *   ]
          */
         'grant_types' => [
-            'client_credentials' => true,
-            'authorization_code' => true,
+            'client_credentials' => false,
+            'authorization_code' => false,
             'password'           => true,
-            'refresh_token'      => true,
-            'jwt'                => true,
-        ],
-
-        'storage' => 'OdmAuth\Adapter\MongoAdapter',
-
-        # we use a custom name for our users collection... users :-)
-        'storage_settings' => [
-            'user_table' => 'users'
+            'refresh_token'      => false,
+            'jwt'                => false,
         ],
 
         /*
@@ -158,6 +91,7 @@ return [
         'access_lifetime' => 43200,
         'enforce_state'  => true,  // default
     ],
+
     'zf-content-negotiation' => [
         'controllers' => [
             'OdmAuth\Controller\Auth' => [

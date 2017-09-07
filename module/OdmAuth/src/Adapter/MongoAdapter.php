@@ -88,6 +88,9 @@ class MongoAdapter extends OAuth2Mongo
      */
     public function __construct($connection, $config = [])
     {
+
+        dd('MongoAdapter!!');
+
         // @codeCoverageIgnoreStart
         if (! (extension_loaded('mongodb') || extension_loaded('mongo'))
             || ! class_exists(MongoClient::class)

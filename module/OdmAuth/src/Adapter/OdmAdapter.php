@@ -8,7 +8,7 @@ use OAuth2\Response as OAuth2Response;
 use OAuth2\Server as OAuth2Server;
 use Zend\Http\Request;
 use Zend\Http\Response;
-use ZF\MvcAuth\Authentication\AbstractAdapter;
+use ZF\MvcAuth\Authentication\OAuth2Adapter;
 use ZF\MvcAuth\Identity;
 use ZF\MvcAuth\MvcAuthEvent;
 
@@ -17,7 +17,7 @@ use ZF\MvcAuth\MvcAuthEvent;
  * Class OAuth2Adapter
  * @package Application\Auth
  */
-class OdmAdapter extends AbstractAdapter
+class OdmAdapter extends OAuth2Adapter
 {
     /**
      * Redis based cache for faster token processing
@@ -44,7 +44,7 @@ class OdmAdapter extends AbstractAdapter
      *
      * @var array
      */
-    private $providesTypes = ['oauth2'];
+    private $providesTypes = ['oauth2','odmauth'];
 
     /**
      * Request methods that will not have request bodies
@@ -113,6 +113,8 @@ class OdmAdapter extends AbstractAdapter
      */
     public function getTypeFromRequest(Request $request)
     {
+        // dd($request);
+
         $type = parent::getTypeFromRequest($request);
 
         if (false !== $type) {
@@ -160,6 +162,9 @@ class OdmAdapter extends AbstractAdapter
      */
     public function authenticate(Request $request, Response $response, MvcAuthEvent $mvcAuthEvent)
     {
+        dump('OdmAdapter:authenticate');
+        throw new \Exception("poopoo");
+
         $oauth2request = new OAuth2Request(
             $request->getQuery()->toArray(),
             $request->getPost()->toArray(),

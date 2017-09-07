@@ -143,7 +143,8 @@ class OdmAuthService
 
         /** @var User $user */
         $user = $repo->findOneBy([
-            'username' => $auth->getUsername()
+            'username' => $auth->getUsername(),
+            'enabled' => true
         ]);
 
         if($user !== null && Password::verify($auth->getPassword(),$user->getPassword())){
