@@ -41,6 +41,25 @@ class Request extends \ZF\ContentNegotiation\Request
     protected $auth;
 
     /**
+     * Get the access token if provided. Only supports Bearer at the moment.
+     *
+     * @return string|null
+     */
+    public function getAccessToken()
+    {
+        $authHeader = $this->getHeader('Authorization');
+        if ($authHeader !== false) {
+            $tokenData = explode(' ', $authHeader->getFieldValue());
+            # Only interested in Bearer tokens at the moment
+            if ($tokenData[0] == 'Bearer' && isset($tokenData[1])) {
+                return trim($tokenData[1]);
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Is server side caching of API results allowed?
      * @return boolean
      */

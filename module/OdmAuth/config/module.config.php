@@ -18,9 +18,10 @@ return [
             ),
         ),
         'factories' => array(
-            'Request'                      => 'OdmAuth\\Factory\\RequestFactory',
+            'Request' => 'OdmAuth\\Factory\\RequestFactory',
             'OdmAuth\\Adapter\\OdmAdapter' => 'OdmAuth\\Factory\\OdmAdapterFactory',
             'OdmAuth\\Service\\OdmAuthService' => 'OdmAuth\\Factory\\OdmAuthServiceFactory',
+            'ZF\MvcAuth\Authentication\DefaultAuthenticationListener' => 'OdmAuth\\Factory\\DefaultAuthenticationListenerFactory'
         ),
     ),
 

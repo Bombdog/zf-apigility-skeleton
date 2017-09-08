@@ -23,7 +23,7 @@ class OdmAdapterFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $adapter = new OdmAdapter($container->get('OdmAuth\Service\OdmAuthService'), ['odmauth','oauth2']);
+        $adapter = new OdmAdapter($container->get('OdmAuth\Service\OdmAuthService'), ['oauth2','odmauth']);
 
         if($container->has('object-cache')) {
             $adapter->setCache($container->get('object-cache'));

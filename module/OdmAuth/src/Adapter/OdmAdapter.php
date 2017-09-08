@@ -3,12 +3,13 @@
 namespace OdmAuth\Adapter;
 
 use Application\Cache\ObjectCache;
-use OAuth2\Request as OAuth2Request;
 use OAuth2\Response as OAuth2Response;
-use OAuth2\Server as OAuth2Server;
+use OdmAuth\Service\OdmAuthService;
 use Zend\Http\Request;
 use Zend\Http\Response;
-use ZF\MvcAuth\Authentication\OAuth2Adapter;
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
+use ZF\MvcAuth\Authentication\AbstractAdapter;
 use ZF\MvcAuth\Identity;
 use ZF\MvcAuth\MvcAuthEvent;
 
@@ -17,7 +18,7 @@ use ZF\MvcAuth\MvcAuthEvent;
  * Class OAuth2Adapter
  * @package Application\Auth
  */
-class OdmAdapter extends OAuth2Adapter
+class OdmAdapter extends AbstractAdapter
 {
     /**
      * Redis based cache for faster token processing
@@ -35,16 +36,16 @@ class OdmAdapter extends OAuth2Adapter
     protected $authorizationTokenTypes = ['bearer'];
 
     /**
-     * @var OAuth2Server
+     * @var OdmAuthService
      */
-    private $oauth2Server;
+    private $oauth2Service;
 
     /**
      * Authentication types this adapter provides.
      *
      * @var array
      */
-    private $providesTypes = ['oauth2','odmauth'];
+    private $providesTypes = ['oauth2'];
 
     /**
      * Request methods that will not have request bodies
@@ -58,11 +59,11 @@ class OdmAdapter extends OAuth2Adapter
     ];
 
     /**
-     * @param $oauth2Server
+     * @param OdmAuthService $oauth2Service
      */
-    public function __construct($oauth2Server, $types = null)
+    public function __construct(OdmAuthService $oauth2Service, $types = null)
     {
-        $this->oauth2Server = $oauth2Server;
+        $this->oauth2Service = $oauth2Service;
 
         if (is_string($types) && !empty($types)) {
             $types = [$types];
@@ -113,8 +114,6 @@ class OdmAdapter extends OAuth2Adapter
      */
     public function getTypeFromRequest(Request $request)
     {
-        // dd($request);
-
         $type = parent::getTypeFromRequest($request);
 
         if (false !== $type) {
@@ -157,40 +156,21 @@ class OdmAdapter extends OAuth2Adapter
      * @param Response $response
      * @param MvcAuthEvent $mvcAuthEvent
      *
-     * @return false|Identity\IdentityInterface False on failure, IdentityInterface
-     *     otherwise
+     * @return mixed|Response|Identity\AuthenticatedIdentity|Identity\GuestIdentity
+     * @throws \Exception
      */
     public function authenticate(Request $request, Response $response, MvcAuthEvent $mvcAuthEvent)
     {
-        dump('OdmAdapter:authenticate');
-        throw new \Exception("poopoo");
-
-        $oauth2request = new OAuth2Request(
-            $request->getQuery()->toArray(),
-            $request->getPost()->toArray(),
-            [],
-            ($request->getCookie() ? $request->getCookie()->getArrayCopy() : []),
-            ($request->getFiles() ? $request->getFiles()->toArray() : []),
-            (method_exists($request, 'getServer') ? $request->getServer()->toArray() : $_SERVER),
-            $request->getContent(),
-            $request->getHeaders()->toArray()
-        );
-
-        # Read the authorization header data in order to access the cache
-        $requestTokenKey = null;
-        $requestTokenValue = null;
-        $authHeader = $request->getHeader('Authorization');
-        if ($authHeader !== false) {
-            $tokenData = explode(' ', $authHeader->getFieldValue());
-            # Only interested in Bearer tokens at the moment
-            if ($tokenData[0] == 'Bearer') {
-                list($requestTokenKey, $requestTokenValue) = $tokenData;
-            }
+        if(! $request instanceof \OdmAuth\Request\Request) {
+            return new ApiProblemResponse(new ApiProblem(500,'Server misconfigured - OdmAdapter needs an OdmAuth request'));
         }
 
-        # Try the cache for an identity
-        if ($requestTokenValue !== null && $this->cache !== null) {
-            $this->cache->setNamespace($requestTokenKey);
+        /** @var \OdmAuth\Request\Request $request */
+        $requestTokenValue = $request->getAccessToken();
+
+        # Try the cache for an identity rather than hitting the db
+        if (!empty($requestTokenValue) && $this->cache !== null) {
+            $this->cache->setNamespace('Bearer');
             if ($this->cache->contains($requestTokenValue)) {
                 $identity = unserialize($this->cache->fetch($requestTokenValue));
                 if ($identity !== false) {
@@ -200,25 +180,18 @@ class OdmAdapter extends OAuth2Adapter
         }
 
         # Verify the request
-        if ($this->oauth2Server->verifyResourceRequest($oauth2request)) {
+        if ($this->oauth2Service->verifyResourceRequest($request)) {
 
-            $token = $this->oauth2Server->getAccessTokenData($oauth2request);
-            $token['user'] = $this->getUserDetails($token['user_id']);
-            $identity = new Identity\AuthenticatedIdentity($token);
-            $identity->setName($token['user_id']);
+            $token = $this->oauth2Service->getToken();
+            //$token['user'] = $this->getUserDetails($token['user_id']);
+            $identity = new Identity\AuthenticatedIdentity($token);  //@todo pad out identity with user data
+            //$identity->setName($token['user_id']);
+
         } else {
 
-            /** @var OAuth2Response $oauth2Response */
-            $oauth2Response = $this->oauth2Server->getResponse();
-            $status = $oauth2Response->getStatusCode();
-
-            // 401 or 403 mean invalid credentials or unauthorized scopes; report those.
-            if (in_array($status, [401, 403], true) && null !== $oauth2Response->getParameter('error')) {
-                return $this->mergeOAuth2Response($status, $response, $oauth2Response);
+            if($this->oauth2Service->isError()) {
+                return $this->oauth2Service->getResponse();
             }
-
-            // Merge in any headers; typically sets a WWW-Authenticate header.
-            $this->mergeOAuth2ResponseHeaders($response, $oauth2Response->getHttpHeaders());
 
             // Otherwise, no credentials were present at all, so we just create a guest identity.
             $identity = new Identity\GuestIdentity();
@@ -238,7 +211,7 @@ class OdmAdapter extends OAuth2Adapter
     private function getUserDetails($user_id)
     {
         /** @var MongoAdapter $store */
-        $store = $this->oauth2Server->getStorage('access_token');
+        $store = $this->oauth2Service->getStorage('access_token');
 
         if ($store !== null) {
             $user = $store->getUser($user_id);
@@ -256,42 +229,5 @@ class OdmAdapter extends OAuth2Adapter
             return $user;
         }
         return [];
-    }
-
-    /**
-     * Merge the OAuth2\Response instance's status and headers into the current Zend\Http\Response.
-     *
-     * @param int $status
-     * @param Response $response
-     * @param OAuth2Response $oauth2Response
-     *
-     * @return Response
-     */
-    private function mergeOAuth2Response($status, Response $response, OAuth2Response $oauth2Response)
-    {
-        $response->setStatusCode($status);
-        return $this->mergeOAuth2ResponseHeaders($response, $oauth2Response->getHttpHeaders());
-    }
-
-    /**
-     * Merge the OAuth2\Response headers into the current Zend\Http\Response.
-     *
-     * @param Response $response
-     * @param array $oauth2Headers
-     *
-     * @return Response
-     */
-    private function mergeOAuth2ResponseHeaders(Response $response, array $oauth2Headers)
-    {
-        if (empty($oauth2Headers)) {
-            return $response;
-        }
-
-        $headers = $response->getHeaders();
-        foreach ($oauth2Headers as $header => $value) {
-            $headers->addHeaderLine($header, $value);
-        }
-
-        return $response;
     }
 }
