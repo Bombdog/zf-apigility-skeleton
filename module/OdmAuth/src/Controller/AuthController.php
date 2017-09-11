@@ -33,13 +33,15 @@ class AuthController extends AbstractActionController
 
     /**
      * Token Action (/oauth)
+     *
+     * @return \Zend\Http\Response|\Zend\Stdlib\ResponseInterface
      */
     public function tokenAction()
     {
         $request = $this->getRequest();
         if (! $request instanceof HttpRequest) {
             // not an HTTP request; nothing left to do
-            return;
+            return null;
         }
 
         if ($request->isOptions()) {

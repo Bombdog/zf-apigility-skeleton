@@ -4,7 +4,7 @@ namespace Entity;
 use ZF\ApiProblem\Exception\ProblemExceptionInterface;
 
 /**
- * General domain exception for HAPI repositories and services.
+ * General domain exception for API repositories and services.
  * Made compatible with Apigility via ProblemExceptionInterface.
  * @package Entity
  */

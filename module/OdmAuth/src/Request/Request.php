@@ -60,6 +60,16 @@ class Request extends \ZF\ContentNegotiation\Request
     }
 
     /**
+     *
+     * @return null|string
+     */
+    public function getScope()
+    {
+        $auth = $this->getAuth();
+        return $auth->getScope();
+    }
+
+    /**
      * Is server side caching of API results allowed?
      * @return boolean
      */

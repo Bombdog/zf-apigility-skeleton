@@ -8,6 +8,7 @@ use Documents\UserRepository;
 use Entity\Document\OAuth\AccessToken;
 use Entity\Document\User;
 use Entity\Util\Password;
+use OdmScope\Service\ScopeService;
 use Zend\Http\Response as HttpResponse;
 use OdmAuth\Request\Request as HttpRequest;
 use Zend\Http\Response;
@@ -29,6 +30,11 @@ class OdmAuthService
      * @var DocumentManager
      */
     protected $dm;
+
+    /**
+     * @var ScopeService
+     */
+    protected $scopeService;
 
     /**
      * @var HttpResponse
@@ -60,6 +66,16 @@ class OdmAuthService
     public function __construct(DocumentManager $dm)
     {
         $this->dm = $dm;
+    }
+
+    /**
+     * Inject the scope service.
+     * Without it the requested scopes will be ignored and the defaults will be used.
+     * @param ScopeService $scopeService
+     */
+    public function setScopeService($scopeService)
+    {
+        $this->scopeService = $scopeService;
     }
 
     /**
@@ -146,14 +162,14 @@ class OdmAuthService
     }
 
     /**
-     * Check an api resource request, ie one with the Authorization header
+     * Check an api resource request, ie one with the Authorization header.
+     * A scope can also be passed if a reduced scope is required for the duration of the request.
      *
      * @param HttpRequest $request
-     * @param null $scope
      *
      * @return bool
      */
-    public function verifyResourceRequest(HttpRequest $request, $scope = null)
+    public function verifyResourceRequest(HttpRequest $request)
     {
         $this->token = $this->getAccessTokenData($request);
 
@@ -163,24 +179,23 @@ class OdmAuthService
         }
 
         /**
-         * Check scope, if provided
+         * Check the scope, if provided in the request.
          * If token doesn't have a scope, it's null/empty, or it's insufficient, then throw 403
          * @see http://tools.ietf.org/html/rfc6750#section-3.1
-         *
-        if ($scope && (!isset($token["scope"]) || !$token["scope"] || !$this->scopeUtil->checkScope($scope, $token["scope"]))) {
-            $response->setError(403, 'insufficient_scope', 'The request requires higher privileges than provided by the access token');
-            $response->addHttpHeaders(array(
-                'WWW-Authenticate' => sprintf('%s realm="%s", scope="%s", error="%s", error_description="%s"',
-                    $this->tokenType->getTokenType(),
-                    $this->config['www_realm'],
-                    $scope,
-                    $response->getParameter('error'),
-                    $response->getParameter('error_description')
-                )
-            ));
-
-            return false;
-        }*/
+         */
+        $requestScope = $request->getScope();
+        if(!empty($requestScope) && $this->scopeService !== null) {
+            try {
+                $mergedScope = $this->scopeService->mergeScopeRequest($this->token->getScope(), $request->getScope());
+                $this->token->setScope($mergedScope);
+            }
+            catch (\Exception $e) {
+                $this->setApiProblemResponse(403,'insufficient_scope',
+                    'The request requires higher privileges than provided by the access token'
+                );
+                return false;
+            }
+        }
 
         return (bool) $this->token;
     }
@@ -294,17 +309,32 @@ class OdmAuthService
 
         if($user !== null && Password::verify($auth->getPassword(),$user->getPassword())){
 
-            // @todo: evaluate requested vs default scope
-
+            # create a token with the default scope
             $token = new AccessToken($this->expiryTime);
             $token->setUserId($user->getUsername())
                 ->setClientId($auth->getClientId())
                 ->setScope($user->getScope());
 
-            // @todo incorporate a refresh token
+            # if there is a specific request for some other scope
+            $requestScope = $auth->getScope();
+            if(!empty($requestScope) && $this->scopeService !== null) {
+                try {
+                    $mergedScope = $this->scopeService->mergeScopeRequest($this->token->getScope(), $request->getScope());
+                    $this->token->setScope($mergedScope);
+                }
+                catch (\Exception $e) {
+                    $this->setApiProblemResponse(403,'insufficient_scope',
+                        $e->getMessage()
+                    );
+                    return null;
+                }
+            }
+
             $this->dm->persist($token);
             $this->dm->flush($token);
             $this->token = $token;
+
+            // @todo incorporate a refresh token
 
             $response = $this->getResponse();
             $response->setContent(json_encode($token));
