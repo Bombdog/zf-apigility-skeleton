@@ -319,7 +319,7 @@ class OdmAuthService
             $requestScope = $auth->getScope();
             if(!empty($requestScope) && $this->scopeService !== null) {
                 try {
-                    $mergedScope = $this->scopeService->mergeScopeRequest($this->token->getScope(), $request->getScope());
+                    $mergedScope = $this->scopeService->mergeScopeRequest($token->getScope(), $request->getScope());
                     $this->token->setScope($mergedScope);
                 }
                 catch (\Exception $e) {

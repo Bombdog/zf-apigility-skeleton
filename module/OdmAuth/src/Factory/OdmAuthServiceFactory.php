@@ -23,6 +23,12 @@ class OdmAuthServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new OdmAuthService($container->get('doctrine.documentmanager.odm_default'));
+        $service = new OdmAuthService($container->get('doctrine.documentmanager.odm_default'));
+
+        if($container->has('OdmScope\Scope\ScopeService')) {
+            $service->setScopeService($container->get('OdmScope\Scope\ScopeService'));
+        }
+
+        return $service;
     }
 }
