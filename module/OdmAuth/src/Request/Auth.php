@@ -14,7 +14,7 @@ namespace OdmAuth\Request;
  *      scope=article:read (optional)
  * }
  */
-class Auth
+class Auth implements AuthInterface
 {
     /**
      *

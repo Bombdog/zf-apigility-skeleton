@@ -137,6 +137,15 @@ class Request extends \ZF\ContentNegotiation\Request
         return $this->auth;
     }
 
-
-
+    /**
+     *
+     * @param mixed $targetScope
+     *
+     * @return Request
+     */
+    public function setTargetScope($targetScope)
+    {
+        $this->targetScope = $targetScope;
+        return $this;
+    }
 }
