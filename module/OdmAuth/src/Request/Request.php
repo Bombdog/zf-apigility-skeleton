@@ -23,6 +23,7 @@ class Request extends \ZF\ContentNegotiation\Request
     protected $status = self::STATUS_ANON;
 
     /**
+     * Tracking header can be set in config
      * @var string
      */
     protected $trackingId;
@@ -39,6 +40,14 @@ class Request extends \ZF\ContentNegotiation\Request
      * @var Auth
      */
     protected $auth;
+
+    /**
+     * Target scope should be set before dispatch.
+     * In our use case every route must have a scope to compare against.
+     * See OdmScope module bootstrap.
+     * @var
+     */
+    protected $targetScope;
 
     /**
      * Get the access token if provided. Only supports Bearer at the moment.
@@ -60,6 +69,8 @@ class Request extends \ZF\ContentNegotiation\Request
     }
 
     /**
+     * Scope - the requested scope. This can be set by the client when creating the token or sometimes when using
+     * the token but modifying the scope, possibly for test purposes.
      *
      * @return null|string
      */

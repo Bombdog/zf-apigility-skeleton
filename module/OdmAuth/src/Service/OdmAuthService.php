@@ -181,6 +181,9 @@ class OdmAuthService
         /**
          * Check the scope, if provided in the request.
          * If token doesn't have a scope, it's null/empty, or it's insufficient, then throw 403
+         *
+         * TIP: comment this block out if you don't need to change the scope on-the-fly, should save time.
+         *
          * @see http://tools.ietf.org/html/rfc6750#section-3.1
          */
         $requestScope = $request->getScope();
@@ -320,7 +323,7 @@ class OdmAuthService
             if(!empty($requestScope) && $this->scopeService !== null) {
                 try {
                     $mergedScope = $this->scopeService->mergeScopeRequest($token->getScope(), $request->getScope());
-                    $this->token->setScope($mergedScope);
+                    $token->setScope($mergedScope);
                 }
                 catch (\Exception $e) {
                     $this->setApiProblemResponse(403,'insufficient_scope',
