@@ -128,8 +128,10 @@ class Scope
 
     /**
      * Get a weighting for the subtype.
-     * If the subtype is missing "other" then weight is set to maximum.
-     * If subtype is other then "local" adds +1. This way "other" is always an escalation of "other".
+     * If the subtype is "other" then weight is set to maximum.
+     * If subtype is "other" then setting local=true adds +1.
+     * This way "other" is always an privilege escalation of "other", this is for security purposes, there is
+     * no heirarchy for "other" i.e custom subtypes.
      *
      * @param bool $local
      *
