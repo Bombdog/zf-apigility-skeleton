@@ -76,6 +76,21 @@ class Scope
     }
 
     /**
+     * Do both the type and subtype match
+     *
+     * @param Scope $scope
+     *
+     * @return bool
+     */
+    public function isIdenticalTo(Scope $scope)
+    {
+        return (
+            $this->type == $scope->getType() &&
+            $this->subTypeActual == $scope->getSubTypeActual()
+        );
+    }
+
+    /**
      * Is this scope an escalation of another scope?
      * Compares type and weight to decide the answer.
      * In the case where two "other" subtypes are compared then for security reasons it's assumed to be an escalation.

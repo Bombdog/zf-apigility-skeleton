@@ -13,6 +13,7 @@ return [
                     'route' => '/news[/:article_id]',
                     'defaults' => [
                         'controller' => 'News\\V1\\Rest\\Article\\Controller',
+                        'scope' => 'articles',
                     ],
                 ],
             ],
@@ -60,40 +61,6 @@ return [
             'News\\V1\\Rest\\Article\\Controller' => [
                 0 => 'application/vnd.news.v1+json',
                 1 => 'application/json',
-            ],
-        ],
-    ],
-    'zf-hal' => [
-        'metadata_map' => [
-            'News\\V1\\Rest\\Article\\ArticleEntity' => [
-                'entity_identifier_name' => 'id',
-                'route_name' => 'news.rest.article',
-                'route_identifier_name' => 'article_id',
-                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
-            ],
-            \News\V1\Rest\Article\ArticleCollection::class => [
-                'entity_identifier_name' => 'id',
-                'route_name' => 'news.rest.article',
-                'route_identifier_name' => 'article_id',
-                'is_collection' => true,
-            ],
-            'Document\\Entity\\Article' => [
-                'entity_identifier_name' => 'id',
-                'route_name' => 'news.rest.article',
-                'route_identifier_name' => 'article_id',
-                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
-            ],
-            \Entity\Document\Article::class => [
-                'entity_identifier_name' => 'id',
-                'route_name' => 'news.rest.article',
-                'route_identifier_name' => 'article_id',
-                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
-            ],
-            \Entity\Document\Article::class => [
-                'entity_identifier_name' => 'id',
-                'route_name' => 'news.rest.article',
-                'route_identifier_name' => 'article_id',
-                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
             ],
         ],
     ],

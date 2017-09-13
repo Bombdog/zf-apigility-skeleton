@@ -59,7 +59,28 @@ class ScopeService
     }
 
     /**
-     * Test if a requested scope is valid, the
+     * Find a matching scope to needle within an array of scopes (haystack)
+     *
+     * @param Scope $needle
+     * @param array $haystack
+     *
+     * @return bool
+     */
+    public function matchScope(Scope $needle, array $haystack)
+    {
+        /** @var Scope $scope */
+        foreach ($haystack as $scope) {
+            if($needle->isIdenticalTo($scope)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Test if a requested scope is valid, the requested scope must be within the allowed set.
+     * Useful for generating tokens with a subset of the default permissions.
      *
      * @param Scope $requestedScope
      * @param $allowedSet

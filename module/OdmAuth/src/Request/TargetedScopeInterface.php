@@ -43,17 +43,16 @@ interface TargetedScopeInterface
      *
      * @param array $writeAllScope
      *
-     * @return mixed
+     * @return $this
      */
     public function setWriteAllScope(array $writeAllScope);
 
     /**
-     * Does an identified user have the right to access the targeted scope
+     * Return only the scope that is targeted by a specific http verb
      *
-     * @param $httpMethod
-     * @param $identityScope
+     * @param string $httpMethod
      *
-     * @return mixed
+     * @return array
      */
-    public function isAccessAllowed($httpMethod, $identityScope);
+    public function getTargetScopeForHttpMethod($httpMethod);
 }

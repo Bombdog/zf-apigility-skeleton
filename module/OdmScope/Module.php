@@ -2,6 +2,7 @@
 
 namespace OdmScope;
 
+use OdmScope\Listener\PreDispatchListener;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -42,8 +43,7 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
-        # pre dispatch handler to build application context
+        # pre dispatch handler to read target scopes
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, new PreDispatchListener(), 1002);
-
     }
 }
