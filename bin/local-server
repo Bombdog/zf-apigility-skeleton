@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# Run a PHP built-in server on Port 8888.
+# Very useful for configuring Apigility!
+#    cd into the bin folder and run this from the command line
+cd ../
+php -S 0.0.0.0:8888 -ddisplay_errors=0 -t public public/index.php

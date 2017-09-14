@@ -5,6 +5,7 @@
  * The previous config file has been stored in ./config/modules.config.old
  */
 return [
+    'Application',
     'Zend\\Db',
     'Zend\\Filter',
     'Zend\\Hydrator',
@@ -16,7 +17,6 @@ return [
     'ZF\\Apigility\\Documentation',
     'ZF\\ApiProblem',
     'ZF\\Configuration',
-    'ZF\\OAuth2',
     'ZF\\MvcAuth',
     'ZF\\Hal',
     'ZF\\ContentNegotiation',
@@ -24,6 +24,10 @@ return [
     'ZF\\Rest',
     'ZF\\Rpc',
     'ZF\\Versioning',
-    'Application',
-    'Widgets'
+    'OdmAuth',
+    'OdmScope',
+    'DoctrineModule',
+    'DoctrineMongoODMModule',
+    'Entity',
+    'News'
 ];

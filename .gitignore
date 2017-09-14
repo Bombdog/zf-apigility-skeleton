@@ -3,5 +3,9 @@ vendor/
 config/development.config.php
 data/cache/*
 !data/cache/.gitkeep
+data/DoctrineMongoODMModule/Hydrator/*
+!data/DoctrineMongoODMModule/Hydrator/.gitkeep
+data/DoctrineMongoODMModule/Proxy/*
+!data/DoctrineMongoODMModule/Proxy/.gitkeep
 phpunit.xml
 .idea/

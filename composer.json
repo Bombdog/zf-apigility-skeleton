@@ -25,12 +25,21 @@
             "dev-develop": "1.5-dev"
         }
     },
+    "provide": {
+        "ext-mongo": "1.6.14",
+        "doctrine/doctrine-mongo-odm-module ": "^0.9.1"
+    },
     "require": {
-        "php": "^5.6 || ^7.0",
+        "php": "^7.1",
         "zendframework/zend-component-installer": "^1.0 || ^0.5 || ^1.0.0-dev@dev",
         "zfcampus/zf-apigility": "^1.3",
         "zfcampus/zf-apigility-documentation": "^1.2.3",
-        "zfcampus/zf-development-mode": "^3.0"
+        "zfcampus/zf-development-mode": "^3.0",
+        "zfcampus/zf-apigility-doctrine": "^2.1.0",
+        "alcaeus/mongo-php-adapter": "^1.1",
+        "doctrine/mongodb": "^1.6",
+        "doctrine/mongodb-odm": "^1.1",
+        "bombdog/doctrine-mongo-odm-module": "dev-develop"
     },
     "require-dev": {
         "zendframework/zend-developer-tools": "^1.1",
@@ -38,7 +47,8 @@
         "zfcampus/zf-asset-manager": "^1.1.1",
         "zfcampus/zf-composer-autoloading": "^1.0",
         "zfcampus/zf-deploy": "^1.2",
-        "laravel/homestead": "^6.1"
+        "laravel/homestead": "^6.1",
+        "symfony/var-dumper": "^3.0"
     },
     "suggest": {
         "zfcampus/zf-apigility-doctrine": "zfcampus/zf-apigility-doctrine ^2.1 to create Doctrine-Connected REST services",
@@ -55,7 +65,8 @@
             "ApplicationTest\\": "module/Application/test/"
         },
         "files": [
-            "src/Apigility/constants.php"
+            "src/Apigility/constants.php",
+            "src/helpers.php"
         ]
     },
     "scripts": {
@@ -66,5 +77,11 @@
         "development-status": "zf-development-mode status",
         "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
         "test": "phpunit"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:Bombdog/DoctrineMongoODMModule.git"
+        }
+    ]
 }

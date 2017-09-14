@@ -1,16 +1,30 @@
 <?php
-/**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c] 2014-2016 Zend Technologies USA Inc. (http://www.zend.com]
- */
-
 return [
+    'redis' => [
+        'conn' => 'localhost',
+    ],
     'zf-content-negotiation' => [
         'selectors' => [],
     ],
-    'db' => [
-        'adapters' => [
-            'dummy' => [],
+    'zf-mvc-auth' => [
+        'authentication' => [
+            'map' => [
+                'News\\V1' => 'odmauth',
+                'Fixture\\V1' => 'odmauth',
+            ],
+
+            # register the odmauth adapter as an oauth adapter with zf-mvc-auth
+            'adapters' => [
+                'odmauth' => [
+                    'adapter' => 'OdmAuth\\Adapter\\OdmAdapter',
+                    'storage' => [
+                        'adapter' => 'mongo',
+                        'database' => 'doctrine',
+                        'dsn' => 'mongodb://localhost:27017',
+                        'route' => '/oauth',
+                    ],
+                ],
+            ],
         ],
     ],
 ];

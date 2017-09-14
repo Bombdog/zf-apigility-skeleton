@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+namespace Bd;
+
+use Entity\Util\Password;
+
+chdir(__DIR__);
+require '../vendor/autoload.php';
+unset($argv[0]);
+$password = trim(implode(' ', $argv));
+echo "\nbcrypt($password)\n";
+echo Password::bcrypt($password);
+echo "\n\n";
