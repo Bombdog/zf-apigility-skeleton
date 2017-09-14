@@ -10,18 +10,6 @@ namespace OdmAuth\Request;
  */
 class Request extends \ZF\ContentNegotiation\Request
 {
-
-    const STATUS_DENIED = 0;
-    const STATUS_ANON = 1;
-    const STATUS_IDENTIFIED = 2;
-    const STATUS_IDENTIFIED_SECRET = 3;
-
-    /**
-     * Internal status flag
-     * @var int
-     */
-    protected $status = self::STATUS_ANON;
-
     /**
      * Tracking header can be set in config
      * @var string
@@ -45,9 +33,16 @@ class Request extends \ZF\ContentNegotiation\Request
      * Target scope should be set before dispatch.
      * In our use case every route must have a scope to compare against.
      * See OdmScope module bootstrap.
-     * @var
+     * @var TargetedScopeInterface
      */
     protected $targetScope;
+
+    /**
+     * Any API query in the url is parsed and read into this object.
+     *
+     * @var PagedQueryInterface
+     */
+    protected $pagedQuery;
 
     /**
      * Get the access token if provided. Only supports Bearer at the moment.
@@ -138,14 +133,30 @@ class Request extends \ZF\ContentNegotiation\Request
     }
 
     /**
+     * Set the target scope (comes from the configured defaults for the route)
      *
-     * @param mixed $targetScope
+     * @param TargetedScopeInterface $targetScope
      *
      * @return Request
      */
-    public function setTargetScope($targetScope)
+    public function setTargetScope(TargetedScopeInterface $targetScope)
     {
         $this->targetScope = $targetScope;
+
+        return $this;
+    }
+
+    /**
+     * Set the api query scope (comes from the parsed query string)
+     *
+     * @param PagedQueryInterface $query
+     *
+     * @return Request
+     */
+    public function setPagedQuery(PagedQueryInterface $query)
+    {
+        $this->pagedQuery = $query;
+
         return $this;
     }
 }

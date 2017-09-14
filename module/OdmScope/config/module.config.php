@@ -1,6 +1,6 @@
 <?php
 
-namespace BdScope;
+namespace OdmScope;
 
 return [
     'service_manager' => [

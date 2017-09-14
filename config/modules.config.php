@@ -26,6 +26,7 @@ return [
     'ZF\\Versioning',
     'OdmAuth',
     'OdmScope',
+    'OdmQuery',
     'DoctrineModule',
     'DoctrineMongoODMModule',
     'Entity',

@@ -88,12 +88,6 @@ class Article
      */
     protected $images;
 
-    /**
-     * The old slug for articles imported from wordpress
-     * @var string
-     * @ODM\Field(type="string")
-     */
-    protected $wpSlug;
 
     /**
      * Get id
