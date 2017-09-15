@@ -2,6 +2,8 @@
 
 namespace OdmAuth\Request;
 
+use OdmScope\Scope\ScopeSet;
+
 /**
  * Targeted scopes.
  * These are passed into the configuration.
@@ -52,7 +54,7 @@ interface TargetedScopeInterface
      *
      * @param string $httpMethod
      *
-     * @return array
+     * @return ScopeSet
      */
-    public function getTargetScopeForHttpMethod($httpMethod);
+    public function getTargetScopeSetForHttpMethod($httpMethod);
 }

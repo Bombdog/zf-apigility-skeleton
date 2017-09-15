@@ -6,7 +6,7 @@ namespace Entity\Hydrator;
  *
  * @package Entity\Hydrator
  */
-class TagHydrator extends DefaultHydratorExtractor
+class TagHydrator extends BaseHydratorExtractor
 {
 
 }

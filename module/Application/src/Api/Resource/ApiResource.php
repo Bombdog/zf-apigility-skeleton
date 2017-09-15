@@ -5,39 +5,63 @@ namespace Application\Api\Resource;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use DoctrineMongoODMModule\Paginator\Adapter\DoctrinePaginator;
-use Entity\Hydrator\DefaultHydratorExtractor;
+use Entity\Hydrator\BaseHydratorExtractor;
 use Entity\Repository\BaseRepository;
 use Zend\Paginator\Paginator;
-use ZF\Apigility\Doctrine\Server\Resource\DoctrineResource;
 use ZF\ApiProblem\ApiProblem;
+use ZF\Rest\AbstractResourceListener;
 
 /**
  * Base class for an example Restful API.
  * This can be used as a base class but it's likely that you will have custom requirements for
  * your Restful APIS. Consider extending DoctrineResource and copy what you need from here.
- *
- * @todo: remove the service locator and inject all dependencies at factory
+ * We not be talking no HAL by the way, sorry folks.
  *
  * @package Events\V1\Rest\Event
  */
-class ApiResource extends DoctrineResource
+class ApiResource extends AbstractResourceListener
 {
-
     /**
+     * Doctrine ODM document manager
      * @var DocumentManager
-     *
+     */
     protected $dm;
 
     /**
-     * ApiResource constructor.
+     * Hydrator, based on Phpro\DoctrineHydrationModule
+     * @var BaseHydratorExtractor
+     */
+    protected $hydrator;
+
+    /**
+     * ApiResource constructor. Requires the doc manager and a hydrator.
      *
      * @param DocumentManager $dm
-     *
-    public function __construct(DocumentManager $dm)
+     * @param BaseHydratorExtractor $hydrator
+     */
+    public function __construct(DocumentManager $dm, BaseHydratorExtractor $hydrator)
     {
         $this->dm = $dm;
-    }*/
+        $this->hydrator = $hydrator;
+    }
 
+    /**
+     * Get odm document manager
+     * @return DocumentManager
+     */
+    public function getDocumentManager()
+    {
+        return $this->dm;
+    }
+
+    /**
+     * Get the hydrator
+     * @return BaseHydratorExtractor
+     */
+    public function getHydrator()
+    {
+        return $this->hydrator;
+    }
 
     /**
      * Fetch a record by id.
@@ -50,14 +74,14 @@ class ApiResource extends DoctrineResource
     public function fetch($id)
     {
         /** @var DocumentManager $dm */
-        $dm = $this->getObjectManager();
+        $dm = $this->getDocumentManager();
 
         /** @var BaseRepository $repo */
         $repo = $dm->getRepository($this->getEntityClass());
         $entity = $repo->find($id);
 
         if ($entity !== null) {
-            /** @var DefaultHydratorExtractor $hydrator */
+            /** @var BaseHydratorExtractor $hydrator */
             $hydrator = $this->getHydrator();
             $result = $hydrator->extract($entity);
             if (empty($result)) {
@@ -79,7 +103,7 @@ class ApiResource extends DoctrineResource
     public function fetchAll($params = [])
     {
         /** @var DocumentManager $dm */
-        $dm = $this->getObjectManager();
+        $dm = $this->getDocumentManager();
 
         /** @var DocumentRepository $repo */
         $repo = $dm->getRepository($this->getEntityClass());
@@ -91,7 +115,7 @@ class ApiResource extends DoctrineResource
             $qb->select($view);
         }*/
 
-        // $metadata = $dm->getMetadataFactory()->getAllMetadata();
+        $metadata = $dm->getMetadataFactory()->getAllMetadata();
 
         /*
         if ($context->hasFilter()) {
@@ -128,7 +152,7 @@ class ApiResource extends DoctrineResource
         }
         */
 
-        /** @var DefaultHydratorExtractor $hydrator */
+        /** @var BaseHydratorExtractor $hydrator */
         $hydrator = $this->getHydrator();
         return $hydrator->extractCollection($collection, true);
     }
@@ -154,7 +178,7 @@ class ApiResource extends DoctrineResource
         $context = $sl->get('api-context');
         */
 
-        /** @var DefaultHydratorExtractor $hydrator */
+        /** @var BaseHydratorExtractor $hydrator */
         $hydrator = $this->getHydrator();
         $hydrator->resetView();
         $entityClass = $this->getEntityClass();
@@ -214,7 +238,7 @@ class ApiResource extends DoctrineResource
             return new ApiProblem(403, "Forbidden, missing ownership rights.");
         }*/
 
-        /** @var DefaultHydratorExtractor $hydrator */
+        /** @var BaseHydratorExtractor $hydrator */
         $hydrator = $this->getHydrator();
         $hydrator->resetView();
 

@@ -13,8 +13,11 @@ use Zend\Paginator\Paginator;
 /**
  * Default extractor for extracting results from doctrine objects.
  * This can be used as is or subclassed.
+ *
+ * Based on the DoctrineObject hydrator provided by Phpro\DoctrineHydrationModule
+ *
  */
-class DefaultHydratorExtractor extends DoctrineObject
+class BaseHydratorExtractor extends DoctrineObject
 {
     const TRAIT_AUTHOR = 'Entity\Document\Traits\AuthorTrait';
 

@@ -36,6 +36,7 @@
         "zfcampus/zf-apigility-documentation": "^1.2.3",
         "zfcampus/zf-development-mode": "^3.0",
         "zfcampus/zf-apigility-doctrine": "^2.1.0",
+        "zfcampus/zf-doctrine-querybuilder": "^1.5.1",
         "alcaeus/mongo-php-adapter": "^1.1",
         "doctrine/mongodb": "^1.6",
         "doctrine/mongodb-odm": "^1.1",

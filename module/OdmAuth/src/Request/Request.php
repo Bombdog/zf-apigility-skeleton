@@ -147,6 +147,16 @@ class Request extends \ZF\ContentNegotiation\Request
     }
 
     /**
+     * Get the target scope
+     *
+     * @return array
+     */
+    public function getTargetScopeForRequestMethod()
+    {
+        return $this->targetScope->getTargetScopeForHttpMethod($this->method);
+    }
+
+    /**
      * Set the api query scope (comes from the parsed query string)
      *
      * @param PagedQueryInterface $query
@@ -158,5 +168,13 @@ class Request extends \ZF\ContentNegotiation\Request
         $this->pagedQuery = $query;
 
         return $this;
+    }
+
+    /**
+     * @return PagedQueryInterface
+     */
+    public function getPagedQuery()
+    {
+        return $this->pagedQuery;
     }
 }

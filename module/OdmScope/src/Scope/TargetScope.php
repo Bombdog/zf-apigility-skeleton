@@ -14,19 +14,19 @@ class TargetScope implements TargetedScopeInterface
     protected $routeName;
 
     /**
-     * @var array
+     * @var ScopeSet
      */
-    protected $readScope = [];
+    protected $readScope;
 
     /**
-     * @var array
+     * @var ScopeSet
      */
-    protected $writeScope = [];
+    protected $writeScope;
 
     /**
-     * @var array
+     * @var ScopeSet
      */
-    protected $writeAllScope = [];
+    protected $writeAllScope;
 
     /**
      * TargetScope constructor.
@@ -41,9 +41,9 @@ class TargetScope implements TargetedScopeInterface
             $read = new Scope($scopeName . ':read');
             $write = new Scope($scopeName . ':write');
             $writeAll = new Scope($scopeName . ':write_all');
-            $this->readScope = [$read, $write, $writeAll];
-            $this->writeScope = [$write, $writeAll];
-            $this->writeAllScope = [$writeAll];
+            $this->readScope = new ScopeSet([$read, $write, $writeAll]);
+            $this->writeScope = new ScopeSet([$write, $writeAll]);
+            $this->writeAllScope = new ScopeSet([$writeAll]);
         }
     }
 
@@ -71,7 +71,7 @@ class TargetScope implements TargetedScopeInterface
     public function setReadScope(array $readScope)
     {
         if(!empty($readScope)) {
-            $this->readScope = $this->normalizeScopeArray($readScope);
+            $this->readScope = $this->parseScopeArray($readScope);
         }
 
         return $this;
@@ -87,7 +87,7 @@ class TargetScope implements TargetedScopeInterface
     public function setWriteScope(array $writeScope)
     {
         if(!empty($writeScope)) {
-            $this->writeScope = $this->normalizeScopeArray($writeScope);
+            $this->writeScope = $this->parseScopeArray($writeScope);
         }
 
         return $this;
@@ -103,7 +103,7 @@ class TargetScope implements TargetedScopeInterface
     public function setWriteAllScope(array $writeAllScope)
     {
         if(!empty($writeAllScope)) {
-            $this->writeAllScope = $this->normalizeScopeArray($writeAllScope);
+            $this->writeAllScope = $this->parseScopeArray($writeAllScope);
         }
 
         return $this;
@@ -114,45 +114,49 @@ class TargetScope implements TargetedScopeInterface
      *
      * @param string $httpMethod
      *
-     * @return array
+     * @return ScopeSet
      */
-    public function getTargetScopeForHttpMethod($httpMethod)
+    public function getTargetScopeSetForHttpMethod($httpMethod)
     {
-        $targets = null;
+        $target = null;
         $httpMethod = strtoupper($httpMethod);
 
         switch ($httpMethod) {
             case 'GET' :
             case 'OPTIONS' :
             case 'HEAD' :
-                $targets = $this->readScope;
+                $target = $this->readScope;
                 break;
             case 'POST' :
             case 'PUT' :
             case 'PATCH' :
             case 'DELETE' :
-                $targets = array_merge($this->writeScope, $this->writeAllScope);
+                $target = $this->writeScope;
                 break;
         }
 
-        if ($targets === null || count($targets) == 0) {
+        if ($target === null || $target->count() == 0) {
             throw new DeniedScopeException("HTTP $httpMethod to " . $this->routeName . " has no targeted scope(s). Update your configuration.");
         }
 
-        return $targets;
+        return $target;
     }
 
     /**
-     * Convert any strings to scope objects
+     * Convert any strings to scope objects and place in a set
      *
      * @param array $scopes
+     *
+     * @return ScopeSet
      */
-    protected function normalizeScopeArray(array &$scopes)
+    protected function parseScopeArray(array &$scopes)
     {
         foreach ($scopes as $key => $value) {
             if (is_string($value)) {
                 $scopes[$key] = new Scope($value);
             }
         }
+
+        return new ScopeSet($scopes);
     }
 }

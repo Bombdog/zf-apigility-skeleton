@@ -75,12 +75,25 @@ class PreDispatchListener
 
             /** @var ScopeService $scopeService */
             $scopeService = $sm->get('OdmScope\Service\ScopeService');
-            $targetScopeSet = $targetScope->getTargetScopeForHttpMethod($request->getMethod());
-            $userScopeSet = $scopeService->parseScopeSet($userScope);
+            $targetScopeSet = $targetScope->getTargetScopeSetForHttpMethod($request->getMethod());
+            $userScopeSet = $scopeService->parseScopeList($userScope);
+
+            dump($targetScopeSet);
+
+            foreach ($targetScopeSet as $target) {
+                dump($target);
+            }
+
+            dump($userScopeSet);
+
+
 
             $allowed = false;
-            foreach ($userScopeSet as $scope) {
-                if($scopeService->matchScope($scope, $targetScopeSet)) {
+            foreach ($userScopeSet as $userScope) {
+
+                dump($userScope);
+
+                if($targetScopeSet->contains($userScope)) {
                     $allowed = true;
                     break;
                 }

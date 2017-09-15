@@ -4,6 +4,7 @@ namespace OdmScope\Service;
 
 use OdmScope\PrivilegeEscalationException;
 use OdmScope\Scope\Scope;
+use OdmScope\Scope\ScopeSet;
 
 /**
  * Utilities for parsing and matching scopes.
@@ -29,8 +30,8 @@ class ScopeService
             return $allowedScope;
         }
 
-        $allowedSet = $this->parseScopeSet($allowedScope);
-        $requestedSet = $this->parseScopeSet($requestedScope);
+        $allowedSet = $this->parseScopeList($allowedScope);
+        $requestedSet = $this->parseScopeList($requestedScope);
 
         foreach ($requestedSet as $requested) {
             $this->validateScope($requested, $allowedSet);
@@ -40,42 +41,22 @@ class ScopeService
     }
 
     /**
-     * Read in a space separated scope list and return an array of scope objects
+     * Read in a space separated scope list and return a scope set
      *
-     * @param $scopeSet
+     * @param string $scopeList
      *
-     * @return array
+     * @return ScopeSet
      */
-    public function parseScopeSet($scopeSet)
+    public function parseScopeList($scopeList)
     {
-        $scopes = explode(' ', $scopeSet);
+        $scopes = explode(' ', $scopeList);
         $count = count($scopes);
 
         for ($i = 0; $i < $count; $i++) {
             $scopes[$i] = new Scope($scopes[$i]);
         }
 
-        return $scopes;
-    }
-
-    /**
-     * Find a matching scope to needle within an array of scopes (haystack)
-     *
-     * @param Scope $needle
-     * @param array $haystack
-     *
-     * @return bool
-     */
-    public function matchScope(Scope $needle, array $haystack)
-    {
-        /** @var Scope $scope */
-        foreach ($haystack as $scope) {
-            if($needle->isIdenticalTo($scope)) {
-                return true;
-            }
-        }
-
-        return false;
+        return new ScopeSet($scopes);
     }
 
     /**
@@ -83,9 +64,9 @@ class ScopeService
      * Useful for generating tokens with a subset of the default permissions.
      *
      * @param Scope $requestedScope
-     * @param $allowedSet
+     * @param ScopeSet $allowedSet
      */
-    protected function validateScope(Scope $requestedScope, $allowedSet)
+    protected function validateScope(Scope $requestedScope, ScopeSet $allowedSet)
     {
         foreach ($allowedSet as $testScope) {
             if ($requestedScope->isTypeMatch($testScope)) {
