@@ -152,7 +152,7 @@ class Scope
      *
      * @return int
      */
-    public function getSubTypeWeight($local = false)
+    protected function getSubTypeWeight($local = false)
     {
         $weights = [self::SUBTYPE_READ, self::SUBTYPE_WRITE, self::SUBTYPE_WRITE_ALL];
         $weight = array_search($this->subType, $weights, true);

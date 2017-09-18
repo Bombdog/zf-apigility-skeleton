@@ -1,12 +1,12 @@
 <?php
 
-namespace Bot\Core\Api\OAuth\Scope;
+namespace OdmQuery\Scope;
 
 /**
  * Base class for scope rules. Provides default values for priority and the field arrays.
  * To build a filter you must chose from the built in operators provided by the zend doctrine query builder
- * but could be any other kind of querybuilder so there is no coupling here between the filter class and
- * the implementation. Choose from the following :
+ * (but could be any other kind of querybuilder if desired). Choose from:
+ *
  * 'eq, 'neq', 'lt', 'lte', 'gt', 'gte', 'isnull', 'isnotnull', 'in', 'notin', 'between', 'like' and 'regex'
  *
  * Example: only return invoices owned by the logged in user:
@@ -20,9 +20,8 @@ namespace Bot\Core\Api\OAuth\Scope;
  * This filter will be blended with any other filters that the user has requested, with this filter taking priority.
  * For security reasons filters from scope rules MUST always have priority over filters provided by the client side.
  * We need a good set of tests to enforce this and watch for regressions. Notice there is a priority field in our scope
- * filters, this is only for the situation where two or more scoped filters are merged, scoped filters always override
- * user generated queries.
- * @see https://tradeintellect.atlassian.net/wiki/display/BD/OAuth2+Scopes
+ * filters, this is only for the situation where two or more scoped filters are merged.
+ *
  */
 abstract class ScopeRuleAbstract implements ScopeRuleInterface
 {

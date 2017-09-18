@@ -20,7 +20,7 @@ final class PresetFactory
      */
     public static function getInstance($name)
     {
-        $className = __NAMESPACE__ . '\Preset' . "\\" . ucfirst($name);
+        $className = __NAMESPACE__ . '\Presets' . "\\" . ucfirst($name);
         if (class_exists($className)) {
             return new $className();
         }

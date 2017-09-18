@@ -2,6 +2,8 @@
 
 namespace OdmAuth\Request;
 
+use OdmScope\Scope\ScopeSet;
+
 /**
  * A customised request that adds identity etc to the request as it progresses
  * through the bootstrapping system. Extends zf-content negotiation for compatibility with
@@ -149,11 +151,11 @@ class Request extends \ZF\ContentNegotiation\Request
     /**
      * Get the target scope
      *
-     * @return array
+     * @return ScopeSet
      */
-    public function getTargetScopeForRequestMethod()
+    public function getTargetScopeSetForRequestMethod()
     {
-        return $this->targetScope->getTargetScopeForHttpMethod($this->method);
+        return $this->targetScope->getTargetScopeSetForHttpMethod($this->method);
     }
 
     /**

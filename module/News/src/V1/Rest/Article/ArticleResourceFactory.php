@@ -1,8 +1,10 @@
 <?php
+
 namespace News\V1\Rest\Article;
 
 use Entity\Document\Article;
 use Entity\Hydrator\ArticleHydrator;
+use OdmQuery\Service\ApiQueryManager;
 use Zend\ServiceManager\ServiceManager;
 
 class ArticleResourceFactory
@@ -16,8 +18,9 @@ class ArticleResourceFactory
     {
         $dm = $services->get('doctrine.documentmanager.odm_default');
         $hydrator = new ArticleHydrator($dm);
-        $resource =  new ArticleResource($dm,$hydrator);
+        $resource = new ArticleResource($dm, $hydrator);
         $resource->setEntityClass(Article::class);
+        $resource->setQueryManager($services->get('QueryManager'));
 
         return $resource;
     }

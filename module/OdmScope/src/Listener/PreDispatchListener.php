@@ -14,11 +14,11 @@ use ZF\MvcAuth\Identity\IdentityInterface;
 
 /**
  * This is a custom listener that pulls in the configured scopes for the requested route.
+ * A TargetScope object is appended to the request.
  */
 class PreDispatchListener
 {
     /**
-     * Determine if we have an authorization failure, and, if so, return a 403 response
      *
      * @param MvcEvent $mvcEvent
      *
@@ -78,24 +78,11 @@ class PreDispatchListener
             $targetScopeSet = $targetScope->getTargetScopeSetForHttpMethod($request->getMethod());
             $userScopeSet = $scopeService->parseScopeList($userScope);
 
-            dump($targetScopeSet);
-
-            foreach ($targetScopeSet as $target) {
-                dump($target);
-            }
-
-            dump($userScopeSet);
-
-
-
             $allowed = false;
             foreach ($userScopeSet as $userScope) {
-
-                dump($userScope);
-
-                if($targetScopeSet->contains($userScope)) {
+                # NB all matches are retained by the target set
+                if($targetScopeSet->matches($userScope)) {
                     $allowed = true;
-                    break;
                 }
             }
 

@@ -3,7 +3,8 @@
 namespace OdmQuery\Query\Select;
 
 /**
- * A view on
+ * Select list for running a query.
+ * Also supports blacklisted and default fields.
  */
 class Selection
 {
@@ -25,6 +26,12 @@ class Selection
      * @var bool
      */
     protected $selectAll = false;
+
+    /**
+     * Defaults must be set before blacklist.
+     * @var bool
+     */
+    protected $defaultsSet = false;
 
     /**
      * Selection constructor.
@@ -62,6 +69,40 @@ class Selection
             $this->secondary = $nestedFields;
         }
     }
+
+    /**
+     * Apply any defaults.
+     * Defaults can only be set if there is no selection (and no select all)
+     *
+     * @param array $defaults
+     *
+     * @return $this
+     */
+    public function setDefaults(array $defaults)
+    {
+        $this->defaultsSet = true;
+        if(!empty($this->getPrimary()) && !empty($defaults) && !$this->selectAll) {
+            $this->primary = $defaults;
+        }
+
+        return $this;
+    }
+
+
+    /**
+     *
+     */
+    public function setBlacklist()
+    {
+        if(!$this->defaultsSet) {
+            throw new \Exception('Blacklist can only be set after defaults');
+        }
+
+        // ERE!!! ****************
+
+
+    }
+
 
     /**
      * Get the primary fields (or empty array means select *)

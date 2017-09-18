@@ -8,7 +8,7 @@ namespace OdmScope\Scope;
  * Class ScopeSet
  * @package OdmScope\Scope
  */
-class ScopeSet implements \ArrayAccess
+class ScopeSet implements \Iterator
 {
     /**
      * Array of scopes
@@ -17,19 +17,32 @@ class ScopeSet implements \ArrayAccess
     protected $scopes;
 
     /**
+     * Array of matches (of above scopes that have been matched)
+     * @var array
+     */
+    protected $matches = [];
+
+    /**
+     * Flag array end to external iterator
+     * @var bool
+     */
+    protected $end = false;
+
+    /**
      * ScopeSet constructor.
      *
      * @param array $scopes
      */
     public function __construct(array $scopes = [])
     {
-        foreach ($scopes as $scope) {
-            if(!$scope instanceof $scope) {
-                throw new \InvalidArgumentException("Scope must be an instanmce of scope");
+        foreach ($scopes as $key => $scope) {
+            if(!$scope instanceof Scope) {
+                throw new \InvalidArgumentException("Scope must be an instance of scope");
             }
         }
 
-        $this->scopes = $scopes;
+        $this->scopes = array_values($scopes);
+        reset($this->scopes);
     }
 
     /**
@@ -76,66 +89,94 @@ class ScopeSet implements \ArrayAccess
     }
 
     /**
-     * Whether a offset exists
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     * Same as contains but stores matches for later reference
+     *
+     * @param Scope $scope
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function matches(Scope $scope)
     {
-        return (is_int($offset) && $offset > -1 && $offset < $this->count());
-    }
-
-    /**
-     * Offset to retrieve
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     *
-     * @return mixed
-     */
-    public function offsetGet($offset)
-    {
-        if($this->offsetExists($offset)) {
-            return $this->scopes[$offset];
+        if($result = $this->contains($scope)) {
+            $this->matches[] = $scope;
         }
 
-        return null;
+        return $result;
     }
 
     /**
-     * Offset to set
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     * Get the previous scope matches for this set.
      *
-     * @param int $offset
-     * @param Scope $value
-     *
-     * @return void
+     * @return array
      */
-    public function offsetSet($offset, $value)
+    public function getMatches()
     {
-        if($value instanceof Scope) {
-            if($offset === null) {
-                $this->addScope($value);
-            } elseif (is_int($offset) && $offset > -1 && $offset <= $this->count()) {
-                if(!$this->contains($value)) {
-                    $this->scopes[$offset] = $value;
-                }
-            }
-        }
+        return $this->matches;
     }
 
     /**
-     * Offset to unset
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     *
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
-     *
-     * @return void
+     * Return the current element
+     * @link http://php.net/manual/en/iterator.current.php
+     * @return mixed Can return any type.
      * @since 5.0.0
      */
-    public function offsetUnset($offset)
+    public function current()
     {
-        // noop
+        return current($this->scopes);
+    }
+
+    /**
+     * Move forward to next element
+     * @link http://php.net/manual/en/iterator.next.php
+     * @return void Any returned value is ignored.
+     * @since 5.0.0
+     */
+    public function next()
+    {
+        $next = next($this->scopes);
+        if($next === false) {
+            $this->end = true;
+        }
+    }
+
+    /**
+     * Return the key of the current element
+     * @link http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     * @since 5.0.0
+     */
+    public function key()
+    {
+        return key($this->scopes);
+    }
+
+    /**
+     * Checks if current position is valid
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     * Returns true on success or false on failure.
+     * @since 5.0.0
+     */
+    public function valid()
+    {
+        if($this->end) {
+            return false;
+        }
+
+        $count = $this->count();
+
+        return $count > 0 && $this->key() < $count;
+    }
+
+    /**
+     * Rewind the Iterator to the first element
+     * @link http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     * @since 5.0.0
+     */
+    public function rewind()
+    {
+        reset($this->scopes);
+        $this->end = false;
     }
 }

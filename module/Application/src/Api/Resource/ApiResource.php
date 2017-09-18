@@ -7,6 +7,7 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
 use DoctrineMongoODMModule\Paginator\Adapter\DoctrinePaginator;
 use Entity\Hydrator\BaseHydratorExtractor;
 use Entity\Repository\BaseRepository;
+use OdmQuery\Service\ApiQueryManager;
 use Zend\Paginator\Paginator;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -26,6 +27,12 @@ class ApiResource extends AbstractResourceListener
      * @var DocumentManager
      */
     protected $dm;
+
+    /**
+     * API query manager
+     * @var ApiQueryManager
+     */
+    protected $qm;
 
     /**
      * Hydrator, based on Phpro\DoctrineHydrationModule
@@ -61,6 +68,22 @@ class ApiResource extends AbstractResourceListener
     public function getHydrator()
     {
         return $this->hydrator;
+    }
+
+    /**
+     * @return ApiQueryManager
+     */
+    public function getQueryManager()
+    {
+        return $this->qm;
+    }
+
+    /**
+     * @param ApiQueryManager $qm
+     */
+    public function setQueryManager(ApiQueryManager $qm)
+    {
+        $this->qm = $qm;
     }
 
     /**
@@ -290,5 +313,4 @@ class ApiResource extends AbstractResourceListener
 
         return true;
     }
-
 }
