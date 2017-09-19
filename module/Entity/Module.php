@@ -5,6 +5,7 @@ use Doctrine\Common\EventManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Types\Type;
 use Entity\Subscriber\SequenceSubscriber;
+use Entity\Subscriber\TimestampSubscriber;
 use Zend\Mvc\MvcEvent;
 
 /**
@@ -48,6 +49,7 @@ class Module
         /** @var EventManager $evtManager */
         $evtManager = $dm->getEventManager();
         $evtManager->addEventSubscriber(new SequenceSubscriber());
+        $evtManager->addEventSubscriber(new TimestampSubscriber());
 
         if (!Type::hasType('utcdatetime')) {
             Type::addType('utcdatetime', 'Entity\Type\UtcDateTime');
