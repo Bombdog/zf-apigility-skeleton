@@ -4,6 +4,7 @@ namespace OdmQuery\Factory;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Interop\Container\ContainerInterface;
 use OdmAuth\Request\Request;
+use OdmQuery\Scope\ScopeRuleFactory;
 use OdmQuery\Service\ApiQueryManager;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
@@ -35,8 +36,8 @@ class ApiQueryManagerFactory implements FactoryInterface
 
         $apiQuery = $request->getPagedQuery();
         $scopes = $request->getTargetScopeSetForRequestMethod();
-
-        $qm = new ApiQueryManager($apiQuery, $scopes->getMatches());
+        $targetScope = ScopeRuleFactory::getInstance($scopes->getMatches());
+        $qm = new ApiQueryManager($apiQuery, $targetScope);
 
         /** @var DocumentManager $dm */
         $dm = $dm = $container->get('doctrine.documentmanager.odm_default');

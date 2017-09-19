@@ -40,9 +40,10 @@ class Selection
      */
     public function __construct(array $requestFields = null)
     {
-        if(!empty($requestedFields)) {
+        if (!empty($requestFields)) {
+
             # All fields can be requested i.e. "?fields=all", so long as there isn't a blacklist
-            if(count($requestedFields) == 1 && $requestedFields[0] == 'all') {
+            if (count($requestFields) == 1 && $requestFields[0] == 'all') {
                 $this->selectAll = true;
                 return;
             }
@@ -52,14 +53,13 @@ class Selection
 
             # Split primary and secondary (nested) field lists
             foreach ($requestFields as $field) {
-                $colon = strpos($field,':');
-                if($colon) {
-                    $primary = substr($field,0,$colon);
-                    $nested = substr($field,$colon+1);
+                $colon = strpos($field, ':');
+                if ($colon) {
+                    $primary = substr($field, 0, $colon);
+                    $nested = substr($field, $colon + 1);
                     $primaryFields[$primary] = true;
                     $nestedFields[$primary][] = $nested;
-                }
-                else {
+                } else {
                     $primaryFields[$field] = true;
                 }
             }
@@ -72,7 +72,7 @@ class Selection
 
     /**
      * Apply any defaults.
-     * Defaults can only be set if there is no selection (and no select all)
+     * Defaults can only be set if there is no selection (and no "select all")
      *
      * @param array $defaults
      *
@@ -81,28 +81,45 @@ class Selection
     public function setDefaults(array $defaults)
     {
         $this->defaultsSet = true;
-        if(!empty($this->getPrimary()) && !empty($defaults) && !$this->selectAll) {
+        if (!empty($this->getPrimary()) && !empty($defaults) && !$this->selectAll) {
             $this->primary = $defaults;
         }
 
         return $this;
     }
 
-
     /**
+     * Set a blacklist to hide fields in restricted scopes
      *
+     * @param array $blacklist
+     *
+     * @return $this
+     * @throws \Exception
      */
-    public function setBlacklist()
+    public function setBlacklist(array $blacklist)
     {
-        if(!$this->defaultsSet) {
-            throw new \Exception('Blacklist can only be set after defaults');
+        if (empty($blacklist)) {
+            return $this;
         }
 
-        // ERE!!! ****************
+        if (!$this->defaultsSet || empty($this->primary)) {
+            throw new \Exception('Blacklist may only be set with defaults');
+        }
 
+        # Apply the blacklist over the primary view
+        $this->primary = array_diff($this->primary, $blacklist);
+        if (empty($this->primary)) {
+            # IMPORTANT: empty array implies ALL fields are visible, but NONE are so an exception MUST BE thrown
+            throw new \Exception("A blacklist has excluded all requested fields, nothing to show.");
+        }
 
+        # Apply the blacklist to any nested secondary view (which is keyed by primary)
+        if (!empty($this->secondary)) {
+            $this->secondary = array_diff_key($this->secondary, array_flip($blacklist));
+        }
+
+        return $this;
     }
-
 
     /**
      * Get the primary fields (or empty array means select *)

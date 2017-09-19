@@ -4,11 +4,9 @@ namespace Application\Api\Resource;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use DoctrineMongoODMModule\Paginator\Adapter\DoctrinePaginator;
 use Entity\Hydrator\BaseHydratorExtractor;
 use Entity\Repository\BaseRepository;
 use OdmQuery\Service\ApiQueryManager;
-use Zend\Paginator\Paginator;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -54,6 +52,7 @@ class ApiResource extends AbstractResourceListener
 
     /**
      * Get odm document manager
+     *
      * @return DocumentManager
      */
     public function getDocumentManager()
@@ -63,6 +62,7 @@ class ApiResource extends AbstractResourceListener
 
     /**
      * Get the hydrator
+     *
      * @return BaseHydratorExtractor
      */
     public function getHydrator()
@@ -71,6 +71,8 @@ class ApiResource extends AbstractResourceListener
     }
 
     /**
+     * Get the query manager
+     *
      * @return ApiQueryManager
      */
     public function getQueryManager()
@@ -79,11 +81,15 @@ class ApiResource extends AbstractResourceListener
     }
 
     /**
+     * Set the query manager, remembering to apply any restrictions to the hydrator / extractor
+     *
      * @param ApiQueryManager $qm
      */
     public function setQueryManager(ApiQueryManager $qm)
     {
         $this->qm = $qm;
+        $this->hydrator->setViewableFields($qm->getView());
+        $this->hydrator->setReadOnlyFields($qm->getReadonlyFields());
     }
 
     /**
@@ -131,59 +137,30 @@ class ApiResource extends AbstractResourceListener
         /** @var DocumentRepository $repo */
         $repo = $dm->getRepository($this->getEntityClass());
         $qb = $repo->createQueryBuilder();
-
-        /*
-        $view = $context->getPrimaryView();
-        if (!empty($view)) {
-            $qb->select($view);
-        }*/
-
-        $metadata = $dm->getMetadataFactory()->getAllMetadata();
-
-        /*
-        if ($context->hasFilter()) {
-            /** @var ODMFilterManager $filterManager *
-            $filterManager = $sl->get('ZfDoctrineQueryBuilderFilterManagerOdm');
-            $filterManager->filter($qb, $metadata[0], $context->getFilter());
-        }
-
-        if ($context->hasSort()) {
-            /** @var ODMOrderByManager $orderByManager *
-            $orderByManager = $sl->get('ZfDoctrineQueryBuilderOrderByManagerOdm');
-            $orderByManager->orderBy($qb, $metadata[0], $context->getSort());
-        }*/
+        $query = $this->qm->buildQuery($qb);
 
         # Get cursor and apply pagination (unfiltered cursor from Mongo find)
         /** @var \Doctrine\ODM\MongoDB\Cursor $cursor */
-        $cursor = $qb->getQuery()->execute();
+        $cursor = $query->execute();
 
-        # Collection class (is actually subclass of Zend Paginator class)
-        $collectionClass = $this->getCollectionClass();
+        # Collection class injected by apigility (is usually empty subclass of Zend\Paginator\Paginator)
+        $paginator = $this->qm->buildPaginator($this->getCollectionClass(), $cursor);
 
-        /** @var Paginator $collection */
-        $collection = new $collectionClass(new DoctrinePaginator($cursor));
-
-        /*
-        $collection->setDefaultItemCountPerPage($context->getPageSize());
-        $collection->setCurrentPageNumber($context->getPage());
-        $collection->setItemCountPerPage($context->getPageSize());
-        */
-
-        /*
-        if ($context->getPage() > $collection->getCurrentPageNumber()) {
-            return new ApiProblem(409, 'Invalid page provided');
+        if($paginator instanceof ApiProblem) {
+            return $paginator;
         }
-        */
 
-        /** @var BaseHydratorExtractor $hydrator */
-        $hydrator = $this->getHydrator();
-        return $hydrator->extractCollection($collection, true);
+        return $this->hydrator->extractCollection($paginator, true);
     }
 
     /**
      * Create a resource item
      * This is permitted for users who have scopes matching allowedWriteScopes.
+     *
+     * @todo: apply user id to hydration context
+     *
      * @param  mixed $data
+     *
      * @return ApiProblem|mixed
      */
     public function create($data)
@@ -196,30 +173,19 @@ class ApiResource extends AbstractResourceListener
             return new ApiProblem(405, "Method Not Allowed (attempt to modify, use PATCH instead)");
         }
 
-        /*
-        /** @var ContextBuilder $context *
-        $context = $sl->get('api-context');
-        */
-
         /** @var BaseHydratorExtractor $hydrator */
         $hydrator = $this->getHydrator();
         $hydrator->resetView();
         $entityClass = $this->getEntityClass();
-
-
         $entity = $hydrator->hydrateWithContext($data, new $entityClass, 0);
-
-        // $entity = $hydrator->hydrateWithContext($data, new $entityClass, $context->getUserId());
-
 
         if ($entity instanceof ApiProblem) {
             return $entity;
         }
 
         /** @var DocumentManager $dm */
-        $dm = $this->getObjectManager();
-        $dm->persist($entity);
-        $dm->flush($entity);
+        $this->dm->persist($entity);
+        $this->dm->flush($entity);
 
         return $hydrator->extract($entity);
     }
@@ -230,8 +196,11 @@ class ApiResource extends AbstractResourceListener
      * Additionally, if the entity is owned and the identity is not the owner (or doesn't have :write_all)
      * then the request will be refused.
      * Note that a PATCH has no effect on fields that have been marked as read-only.
+     *
+     * @todo: apply user id to hydration context
      * @param  mixed $id
      * @param  mixed $data
+     *
      * @return ApiProblem|mixed
      */
     public function patch($id, $data)
@@ -241,40 +210,31 @@ class ApiResource extends AbstractResourceListener
         }
         unset($data['id']);
 
-        /** @var DocumentManager $dm */
-        $dm = $this->getObjectManager();
-
         /** @var BaseRepository $repo */
-        $repo = $dm->getRepository($this->getEntityClass());
+        $repo = $this->dm->getRepository($this->getEntityClass());
         $entity = $repo->find($id);
         if ($entity === null) {
             return new ApiProblem(404, "Not Found");
         }
 
         /*
-        $sl = $this->getServiceManager();
-
-        /** @var ContextBuilder $context *
-        $context = $sl->get('api-context');
-
+        @todo: check ownership of edited record
         if (!$context->isWriteAllAuthorised() && !$context->isOwnedEntity($entity)) {
+            // !$user->isWriteAllAuthorised() && !$user->owns($entity)
             return new ApiProblem(403, "Forbidden, missing ownership rights.");
         }*/
 
         /** @var BaseHydratorExtractor $hydrator */
         $hydrator = $this->getHydrator();
         $hydrator->resetView();
-
-
         $entity = $hydrator->hydrateWithContext($data, $entity, 0);
-        // $entity = $hydrator->hydrateWithContext($data, $entity, $context->getUserId());
-
 
         if ($entity instanceof ApiProblem) {
             return $entity;
         }
 
-        $dm->flush($entity);
+        $this->dm->flush($entity);
+
         return $hydrator->extract($entity);
     }
 
@@ -288,15 +248,8 @@ class ApiResource extends AbstractResourceListener
      */
     public function delete($id)
     {
-        /** @var ContextBuilder $context *
-            $context = $sl->get('api-context');
-         */
-
-        /** @var DocumentManager $dm */
-        $dm = $this->getObjectManager();
-
         /** @var BaseRepository $repo */
-        $repo = $dm->getRepository($this->getEntityClass());
+        $repo = $this->dm->getRepository($this->getEntityClass());
         $entity = $repo->find($id);
 
         if ($entity === null) {
@@ -304,12 +257,14 @@ class ApiResource extends AbstractResourceListener
         }
 
         /*
+        @todo: check ownership of edited record
         if (!$context->isWriteAllAuthorised() && !$context->isOwnedEntity($entity)) {
+            // !$user->isWriteAllAuthorised() && !$user->owns($entity)
             return new ApiProblem(403, "Forbidden, missing ownership rights.");
         }*/
 
-        $dm->remove($entity);
-        $dm->flush($entity);
+        $this->dm->remove($entity);
+        $this->dm->flush($entity);
 
         return true;
     }

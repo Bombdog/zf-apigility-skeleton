@@ -2,12 +2,15 @@
 
 namespace OdmQuery\Service;
 
+use Doctrine\ODM\MongoDB\Cursor;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use DoctrineMongoODMModule\Paginator\Adapter\DoctrinePaginator;
 use OdmAuth\Request\PagedQueryInterface;
 use OdmQuery\Query\Select\Selection;
-use OdmQuery\Scope\ScopeRuleAbstract;
-use OdmQuery\Scope\ScopeRuleFactory;
+use OdmQuery\Scope\ScopeRuleInterface;
+use Zend\Paginator\Paginator;
+use ZF\ApiProblem\ApiProblem;
 use ZF\Doctrine\QueryBuilder\Filter\Service\ODMFilterManager;
 use ZF\Doctrine\QueryBuilder\OrderBy\Service\ODMOrderByManager;
 
@@ -50,22 +53,30 @@ class ApiQueryManager
 
     /**
      * Scope rule for target
-     * @var ScopeRuleAbstract
+     * @var ScopeRuleInterface
      */
-    protected $targetScope;
+    protected $targetScopeRules;
 
     /**
      * ApiQueryManager constructor.
      *
      * @param PagedQueryInterface $requestQuery
+     * @param $targetScopeRules
      */
-    public function __construct(PagedQueryInterface $requestQuery, array $matchingScopes)
+    public function __construct(PagedQueryInterface $requestQuery, $targetScopeRules)
     {
         $this->requestQuery = $requestQuery;
-        $this->targetScope = ScopeRuleFactory::getInstance($matchingScopes);
+
+        if($targetScopeRules instanceof ScopeRuleInterface) {
+            $this->targetScopeRules = $targetScopeRules;
+        }
+
         $this->selection = new Selection($requestQuery->getFields());
-        $this->selection->setDefaults($this->targetScope->getDefaultFields());
-        $this->selection->setBlackList();
+
+        if($this->targetScopeRules !== null) {
+            $this->selection->setDefaults($this->targetScopeRules->getDefaultFields());
+            $this->selection->setBlackList($this->targetScopeRules->getBlackListedFields());
+        }
     }
 
     /**
@@ -97,35 +108,75 @@ class ApiQueryManager
      */
     public function getReadonlyFields()
     {
-        return $this->targetScope->getReadonlyFields();
+        $readOnly = [];
+        if($this->targetScopeRules !== null) {
+            $readOnly = $this->targetScopeRules->getReadonlyFields();
+        }
+
+        return $readOnly;
     }
 
     /**
-     * Build and return a query
+     * Get the primary and secondary as an array to pass into the hydrator.
+     * @return array
+     */
+    public function getView()
+    {
+        return [
+            'primary' => $this->selection->getPrimary(),
+            'secondary' => $this->selection->getSecondary()
+        ];
+    }
+
+    /**
+     * Build and return a query.
+     * This is used for auto-populating your query builder using pre-screened search terms
      */
     public function buildQuery(Builder $builder, $options = [])
     {
-        # select fields
+        # secured select fields
         $view = $this->selection->getPrimary();
         if (!empty($view)) {
             $builder->select($view);
         }
 
-
-        /*
-        if ($context->hasFilter()) {
-            /** @var ODMFilterManager $filterManager *
-            $filterManager = $sl->get('ZfDoctrineQueryBuilderFilterManagerOdm');
-            $filterManager->filter($qb, $metadata[0], $context->getFilter());
+        # secured filter
+        $filter = $this->getMergedFilter();
+        if(!empty($filter) && $this->filterManager !== null) {
+            $this->filterManager->filter($builder, $this->classMetadata, $filter);
         }
 
-        if ($context->hasSort()) {
-            /** @var ODMOrderByManager $orderByManager *
-            $orderByManager = $sl->get('ZfDoctrineQueryBuilderOrderByManagerOdm');
-            $orderByManager->orderBy($qb, $metadata[0], $context->getSort());
-        }*/
+        # secured sort
+        //$sort = $this->getMergedFilter();
+        $sort = [];
+        if(!empty($sort) && $this->orderByManager !== null) {
+            $this->orderByManager->orderBy($builder, $this->classMetadata, $sort);
+        }
 
         return $builder->getQuery($options);
+    }
+
+    /**
+     * Populate a paginator using requested parameters
+     *
+     * @param string $collectionClass
+     * @param $cursor
+     *
+     * @return Paginator|ApiProblem
+     */
+    public function buildPaginator($collectionClass, Cursor $cursor)
+    {
+        /** @var Paginator $paginator */
+        $paginator = new $collectionClass(new DoctrinePaginator($cursor));
+        $paginator->setDefaultItemCountPerPage($this->requestQuery->getPageSize());
+        $paginator->setCurrentPageNumber($this->requestQuery->getPage());
+        $paginator->setItemCountPerPage($this->requestQuery->getPageSize());
+
+        if ($this->requestQuery->getPage() > $paginator->getCurrentPageNumber()) {
+            return new ApiProblem(409, 'Invalid page provided');
+        }
+
+        return $paginator;
     }
 
     /**
@@ -136,19 +187,22 @@ class ApiQueryManager
     private function getMergedFilter()
     {
         $filter = $this->requestQuery->getFilter();
-        $scopeFilter = $this->targetScope->getFilter();
 
-        if ($scopeFilter !== null) {
-            foreach ($scopeFilter as $override) {
-                $overrideApplied = false;
-                foreach ($filter as $key => $searchTerm) {
-                    if ($searchTerm['field'] == $override['field']) {
-                        $filter[$key] = $override;
-                        $overrideApplied = true;
+        if($this->targetScopeRules !== null) {
+            $scopeFilter = $this->targetScopeRules->getFilter();
+
+            if (!empty($scopeFilter)) {
+                foreach ($scopeFilter as $override) {
+                    $overrideApplied = false;
+                    foreach ($filter as $key => $searchTerm) {
+                        if ($searchTerm['field'] == $override['field']) {
+                            $filter[$key] = $override;
+                            $overrideApplied = true;
+                        }
                     }
-                }
-                if (!$overrideApplied) {
-                    $filter[] = $override;
+                    if (!$overrideApplied) {
+                        $filter[] = $override;
+                    }
                 }
             }
         }

@@ -4,7 +4,6 @@ namespace News\V1\Rest\Article;
 
 use Entity\Document\Article;
 use Entity\Hydrator\ArticleHydrator;
-use OdmQuery\Service\ApiQueryManager;
 use Zend\ServiceManager\ServiceManager;
 
 class ArticleResourceFactory
@@ -21,6 +20,9 @@ class ArticleResourceFactory
         $resource = new ArticleResource($dm, $hydrator);
         $resource->setEntityClass(Article::class);
         $resource->setQueryManager($services->get('QueryManager'));
+
+
+        // dump($resource->getCollectionClass());
 
         return $resource;
     }
