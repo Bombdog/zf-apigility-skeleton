@@ -14,15 +14,6 @@ use OdmScope\Scope\ScopeSet;
 interface TargetedScopeInterface
 {
     /**
-     * Set the name of the route (for reference)
-     *
-     * @param $routeName
-     *
-     * @return $this
-     */
-    public function setRouteName($routeName);
-
-    /**
      * Set a read scope or scopes that are allowed to read from the resource
      *
      * @param array $readScope

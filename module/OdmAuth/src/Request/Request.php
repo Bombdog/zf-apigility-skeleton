@@ -41,10 +41,15 @@ class Request extends \ZF\ContentNegotiation\Request
 
     /**
      * Any API query in the url is parsed and read into this object.
-     *
      * @var PagedQueryInterface
      */
     protected $pagedQuery;
+
+    /**
+     * Route name used
+     * @var string
+     */
+    protected $routeName;
 
     /**
      * Get the access token if provided. Only supports Bearer at the moment.
@@ -132,6 +137,44 @@ class Request extends \ZF\ContentNegotiation\Request
         }
 
         return $this->auth;
+    }
+
+    /**
+     * Set the name of the route (for reference)
+     *
+     * @param string $routeName
+     *
+     * @return $this
+     */
+    public function setRouteName($routeName)
+    {
+        $this->routeName = $routeName;
+
+        return $this;
+    }
+
+    /**
+     * Get route name
+     *
+     * @return string
+     */
+    public function getRouteName()
+    {
+        return $this->routeName;
+    }
+
+    /**
+     * Ignored routes (for the purposes of auth and scope listeners)
+     *
+     * @return bool
+     */
+    public function isIgnoredRoute()
+    {
+        return (
+            $this->routeName == 'home' ||
+            $this->routeName == 'oauth' ||
+            strncmp($this->routeName, 'zf-apigility', 12) === 0
+        );
     }
 
     /**

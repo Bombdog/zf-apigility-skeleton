@@ -9,11 +9,6 @@ use OdmScope\DeniedScopeException;
 class TargetScope implements TargetedScopeInterface
 {
     /**
-     * @var string
-     */
-    protected $routeName;
-
-    /**
      * @var ScopeSet
      */
     protected $readScope;
@@ -45,20 +40,6 @@ class TargetScope implements TargetedScopeInterface
             $this->writeScope = new ScopeSet([$write, $writeAll]);
             $this->writeAllScope = new ScopeSet([$writeAll]);
         }
-    }
-
-    /**
-     * Set the name of the route (for reference)
-     *
-     * @param string $routeName
-     *
-     * @return $this
-     */
-    public function setRouteName($routeName)
-    {
-        $this->routeName = $routeName;
-
-        return $this;
     }
 
     /**

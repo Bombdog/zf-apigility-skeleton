@@ -30,7 +30,7 @@ class PreDispatchListener
 
         /** @var Request $request */
         $request = $mvcEvent->getRequest();
-        if (!$mvcEvent->getRequest() instanceof Request) {
+        if (!$mvcEvent->getRequest() instanceof Request || $request->isIgnoredRoute()) {
             return null;
         }
 
@@ -60,6 +60,8 @@ class PreDispatchListener
     }
 
     /**
+     *
+     *
      * @param MvcEvent $mvcEvent
      * @param int $status
      * @param string $detail

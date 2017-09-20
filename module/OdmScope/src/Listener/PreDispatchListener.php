@@ -37,15 +37,15 @@ class PreDispatchListener
 
         $routeMatch = $mvcEvent->getRouteMatch();
         $routeName = $routeMatch->getMatchedRouteName();
+        $request->setRouteName($routeName);
 
-        # ignore the apigility admin area and any oauth requests
-        if ($routeName == 'home' || $routeName == 'oauth' || strncmp($routeName, 'zf-apigility', 12) === 0) {
+        # ignore the apigility admin area and any oauth requests when evaluating scope
+        if ($request->isIgnoredRoute()) {
             return null;
         }
 
         # read in the target scope from the route match
         $targetScope = new TargetScope($routeMatch->getParam('scope'));
-        $targetScope->setRouteName($routeName);
         $targetScope->setReadScope($routeMatch->getParam('readScope', []));
         $targetScope->setWriteScope($routeMatch->getParam('writeScope', []));
         $targetScope->setWriteAllScope($routeMatch->getParam('writeAllScope', []));
