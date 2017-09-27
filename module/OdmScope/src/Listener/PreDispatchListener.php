@@ -60,7 +60,7 @@ class PreDispatchListener
         if($identity !== null) {
             /** @var AccessToken $token */
             $token = $identity->getAuthenticationIdentity();
-            $userScope = $token->getScope();
+            $userScope = ($token !== null) ? $token->getScope() : null;
         }
 
         # determine if targeted scope is accessible before routing

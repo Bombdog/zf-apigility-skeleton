@@ -204,30 +204,4 @@ class OdmAdapter extends AbstractAdapter
 
         return $identity;
     }
-
-    /**
-     * Get the full user details from oauth storage.
-     */
-    private function getUserDetails($user_id)
-    {
-        /** @var MongoAdapter $store */
-        $store = $this->oauth2Service->getStorage('access_token');
-
-        if ($store !== null) {
-            $user = $store->getUser($user_id);
-            $user['_id'] = (string) $user['_id'];
-            unset($user['scope']);
-            unset($user['password']);
-            unset($user['createdAt']);
-            unset($user['username']);
-            unset($user['userProfile']);
-            if (isset($user['auctioneers'])) {
-                foreach ($user['auctioneers'] as $key => $value) {
-                    $user['auctioneers'][$key] = (string) $value;
-                }
-            }
-            return $user;
-        }
-        return [];
-    }
 }
